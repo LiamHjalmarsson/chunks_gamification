@@ -1,5 +1,10 @@
 // Created automatically at startup by index.php
 
+import component_ranking from './js/components/component_ranking.js';
+import component_unit_addQuiz from './js/components/component_unit_addQuiz.js';
+import component_unit_quiz from './js/components/component_unit_quiz.js';
+import component_user_progress from './js/components/component_user_progress.js';
+import component_user_progress_header from './js/components/component_user_progress_header.js';
 import content_chapter_list from './js/components/content_chapter_list.js';
 import content_chapter_list_item from './js/components/content_chapter_list_item.js';
 import content_course_list from './js/components/content_course_list.js';
