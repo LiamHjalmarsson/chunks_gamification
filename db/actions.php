@@ -209,6 +209,14 @@ function PATCH ($params, $pdo) {
   ];
 
 }
+
+// QUIZ USER random 
+
+// BADGES
+
+// STREAK 
+
+
 // SPOT UPDATER
 function update_spot ($pdo, $parent_id, $new_spot, $old_spot, $kind, $kind_parent) {
     
