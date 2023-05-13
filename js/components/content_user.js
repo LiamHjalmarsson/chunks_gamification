@@ -5,37 +5,37 @@ import utils from "../utils/utils.js";
 export default {}
 
 
-// INIT
-;(() => {
+  // INIT
+  ; (() => {
 
-  SubPub.subscribe({
-    event: "user_ok",
-    listener: render,
-  });
+    SubPub.subscribe({
+      event: "user_ok",
+      listener: render,
+    });
 
-  SubPub.subscribe({
-    event: "db::get::course::done",
-    listener: ({ response, params }) => {
-  
-      if (response.course.role === "teacher") {
-        render_views("teacher_create");
+    SubPub.subscribe({
+      event: "db::get::course::done",
+      listener: ({ response, params }) => {
+
+        if (response.course.role === "teacher") {
+          render_views("teacher_create");
+        }
+
+        // Hide anonymous student usernames
+        if (response.course.role === "student") {
+          const h2 = document.querySelector("h2.user_name");
+          if (h2) h2.remove();
+
+          const userInfoDiv = document.querySelector("div.user_info");
+          if (userInfoDiv) userInfoDiv.classList.add("is-student");
+        }
       }
-      
-      // Hide anonymous student usernames
-      if (response.course.role === "student") {
-        const h2 = document.querySelector("h2.user_name");
-        if (h2) h2.remove();
+    });
 
-        const userInfoDiv = document.querySelector("div.user_info");
-        if (userInfoDiv) userInfoDiv.classList.add("is-student");
-      }
-    }
-  });  
-
-})();
+  })();
 
 
-function render () {
+function render() {
 
   const user = state_io.state.user;
   const header_dom = document.querySelector("#content_user");
@@ -43,13 +43,14 @@ function render () {
   header_dom.innerHTML = `
     <div class="user_info">
       <h2 class="user_name">${user.name}</h2>
+      <div id="progress_header"style="display: none;"></div>
       <button class="button_logout">LOGOUT</button>
     </div>
     <div class="views"></div>
   `;
 
   header_dom.querySelector(".button_logout").addEventListener("click", logout);
-  function logout () {
+  function logout() {
     localStorage.removeItem("logged_in_name");
     localStorage.removeItem("logged_in_token");
 
@@ -64,15 +65,15 @@ function render () {
     `;
 
     document.querySelector("#users_admin button").addEventListener("click", admin_users);
-    function admin_users () {
+    function admin_users() {
       utils.push_state_window_history("?users=admin");
       window.location.reload();
     }
   }
-  
+
 }
 
-function render_views ( selected_view ) {
+function render_views(selected_view) {
 
   const views_dom = document.querySelector("#content_header .views");
 
@@ -102,7 +103,7 @@ function render_views ( selected_view ) {
   }
 
   views_dom.querySelectorAll("button").forEach(x => x.addEventListener("click", change_view));
-  function change_view (event) {
+  function change_view(event) {
     render_views(event.target.name);
     SubPub.publish({
       event: `render::new_view`,

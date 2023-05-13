@@ -1,0 +1,31 @@
+#progress_header{
+    width: 20%;
+    height: 100%;
+    display: flex;
+}
+
+#progress_header_rank_img{
+    width: 25%;
+    background-image: url(https://cdn-icons-png.flaticon.com/512/3135/3135783.png);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#progress_header_info{
+    width: 75%;
+}
+
+#progress_header_recentbadge{
+    height: 50%;
+    display: flex;
+    align-items: center;
+}
+
+#progress_header_recentbadge div{
+    width: 20%;
+    height: 100%;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
