@@ -59,4 +59,9 @@ function fillProgressHeader() {
     }
 
     // Rank
+    /*
+        TO DO!
+        Add code for displaying correct rank img when calculation function is finished
+        + remove temporary image from CSS (component_user_progress_header.css)
+    */
 }
