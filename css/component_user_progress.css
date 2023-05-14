@@ -2,6 +2,7 @@
     height: 0;
     padding: 0;
     display: flex;
+    transform: rotate(0deg);
 
     background-color: var(--color_accent_1_overlay);
     border-radius: var(--general_border_radius);
@@ -13,9 +14,13 @@
     width: 100%;
 }
 
-#progress_close{
+#progress_close_btn{
     position: absolute;
+}
 
+#progress_rankings_btn{
+    position: absolute;
+    right: 15px;
 }
 
 #progress_rank{

@@ -16,46 +16,51 @@ function render() {
     progressDiv.style.height = '15vw';
 
     progressDiv.innerHTML = `
-    <button id="progress_close">CLOSE</button>
-    <div id="progress_container">
-        <div id="progress_rank">
-        <div id="progress_rank_current">Current rank: Silver</div>
-            <div id="progress_rank_img"></div>
-            <div id="progress_rank_progressbar">
-            <div><span>Next rank: Diamond</span></div>
+        <button id="progress_close_btn">CLOSE</button>
+        <div id="progress_container">
+            <div id="progress_rank">
+            <div id="progress_rank_current">Current rank: Silver</div>
+                <div id="progress_rank_img"></div>
+                <div id="progress_rank_progressbar">
+                <div><span>Next rank: Diamond</span></div>
+                </div>
+                <div id="progress_stats">
+                    <div>Current streak: 3</div>
+                    <div>Best streak: 5</div>
+                </div>
             </div>
-            <div id="progress_stats">
-                <div>Current streak: 3</div>
-                <div>Best streak: 5</div>
+            <div id="progress_badges_container">
+                <div>Badges</div>
+                <div id="progress_badges">            
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
             </div>
         </div>
-        <div id="progress_badges_container">
-            <div>Badges</div>
-            <div id="progress_badges">            
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-    </div>
+        <button id="progress_rankings_btn">RANKINGS</button>
     `
 
 
-    document.getElementById("progress_close").addEventListener('click', () => {
+    document.getElementById("progress_close_btn").addEventListener('click', () => {
         progressDiv.style.padding = '0'
         progressDiv.style.height = '0';
         progressDiv.innerHTML = "";
     })
 }
+
+// TO DO
+// Transitions
+// Height on.... everything?!?!
 
 
 /*
