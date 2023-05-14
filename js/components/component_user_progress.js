@@ -19,6 +19,7 @@ function render() {
     <button id="progress_close">CLOSE</button>
     <div id="progress_container">
         <div id="progress_rank">
+        <div id="progress_rank_current">Current rank: Silver</div>
             <div id="progress_rank_img"></div>
             <div id="progress_rank_progressbar">
             <div><span>Next rank: Diamond</span></div>
@@ -28,8 +29,22 @@ function render() {
                 <div>Best streak: 5</div>
             </div>
         </div>
-        <div id="progress_badges">
-            
+        <div id="progress_badges_container">
+            <div>Badges</div>
+            <div id="progress_badges">            
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
         </div>
     </div>
     `
