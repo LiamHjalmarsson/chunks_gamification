@@ -54,7 +54,7 @@ function fillProgressHeader() {
         let recentBadge = badges[badges.length - 1]
 
         document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: ";
-        document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "url(" + `./media/badges/badge${recentBadge}.png` + ")";
+        document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "url(" + `https://cdn-icons-png.flaticon.com/512/3135/3135783.png` + ")";
     }
 
     // Rank

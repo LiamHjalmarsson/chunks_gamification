@@ -50,6 +50,7 @@ function render() {
         </div>
         <button id="progress_rankings_btn">RANKINGS</button>
     `
+    fillProgressRanking()
 
     // On close click: close and empty main container
     document.getElementById("progress_close_btn").addEventListener('click', () => {
@@ -58,6 +59,22 @@ function render() {
         progressDiv.style.opacity = '0';
     })
 }
+
+function fillProgressRanking() {
+    // ADD: IMAGE AND RANK
+
+    // Highest streak
+    document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: ${state_io.state.user.high_Streak}`;
+}
+
+const badges = [
+    {
+        badge: 1,
+        description: "Du har lyckats svara fel 20 gånger på raken!"
+    },
+    {}
+]
+
 
 /*
 TO DO
@@ -69,6 +86,7 @@ TO DO
 - Calculate and display correct rank + image + progress bar (these are just placeholders for now)
 - Clean up the code, waaay to many IDs and messy CSS?? 
 - What to display if youre at the top rank + how should the progress bar look then?
+- Add current streak (new key in DB?)
 
 /*
 function render () {
