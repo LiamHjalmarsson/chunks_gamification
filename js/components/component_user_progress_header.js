@@ -10,9 +10,8 @@ export default {};
     });
 })();
 
-
 function render() {
-    let progressHeader = document.getElementById("progress_header")
+    const progressHeader = document.getElementById("progress_header")
 
     // Display ranking header (otherwise hidden until course has been chosen)
     progressHeader.style.display = "";

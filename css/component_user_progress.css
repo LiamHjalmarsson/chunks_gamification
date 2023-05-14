@@ -1,0 +1,72 @@
+#content_user_progress{
+    height: 0;
+    padding: 0;
+    display: flex;
+
+    background-color: var(--color_accent_1_overlay);
+    border-radius: var(--general_border_radius);
+    transition: height var(--t_fast_transition), padding var(--t_fast_transition);   
+}
+
+/* transition: flex-basis var(--t_fast_transition), padding var(--t_fast_transition), opacity var(--t_fast_transition); */
+
+#progress_container{
+    display: flex;
+    width: 100%;
+}
+
+#progress_close{
+    position: absolute;
+
+}
+
+#progress_rank{
+    width: 50%;
+    background-color: antiquewhite;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#progress_badges{
+    width: 50%;
+    background-color: rgb(215, 248, 250);
+}
+
+
+#progress_rank_img{
+    height: 25%;
+    width: 25%;
+    background-image: url(https://cdn-icons-png.flaticon.com/512/3135/3135783.png);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#progress_rank_progressbar{
+    width: 80%;
+    height: 20%;
+    background-color: cornflowerblue;
+    border-radius: var(--general_border_radius);
+    position: relative;
+    transform: rotate(0deg);
+}
+
+#progress_rank_progressbar div{
+    width: 33%;
+    height: 100%;
+    background-color: aqua;
+    display: flex;
+    align-items: center;
+    border-radius: var(--general_border_radius);
+    text-align: center;
+}
+
+#progress_rank_progressbar div span{
+    position: fixed;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
