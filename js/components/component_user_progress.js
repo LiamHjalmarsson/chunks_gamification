@@ -24,8 +24,8 @@ function render() {
             <div><span>Next rank: Diamond</span></div>
             </div>
             <div id="progress_stats">
-                <div></div>
-                <div></div>
+                <div>Current streak: 3</div>
+                <div>Best streak: 5</div>
             </div>
         </div>
         <div id="progress_badges">
