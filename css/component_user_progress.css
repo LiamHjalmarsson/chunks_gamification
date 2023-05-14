@@ -3,10 +3,11 @@
     padding: 0;
     display: flex;
     transform: rotate(0deg);
+    opacity: 0;
 
     background-color: var(--color_accent_1_overlay);
     border-radius: var(--general_border_radius);
-    transition: height var(--t_fast_transition), padding var(--t_fast_transition);   
+    transition: height var(--t_fast_transition), padding var(--t_fast_transition), opacity 300ms;   
 }
 
 #progress_container{
@@ -49,7 +50,7 @@
 #progress_rank_progressbar{
     width: 80%;
     height: 20%;
-    background-color: cornflowerblue;
+    background-color: var(--color_back_1);
     border-radius: var(--general_border_radius);
     position: relative;
     transform: rotate(0deg);
@@ -58,7 +59,7 @@
 #progress_rank_progressbar div{
     width: 33%;
     height: 100%;
-    background-color: aqua;
+    background-color: var(--color_accent_0);
     display: flex;
     align-items: center;
     border-radius: var(--general_border_radius);

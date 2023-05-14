@@ -12,8 +12,9 @@ export default {};
 
 function render() {
     const progressDiv = document.getElementById("content_user_progress");
-    progressDiv.style.padding = '15px'
+    progressDiv.style.padding = '15px';
     progressDiv.style.height = '15vw';
+    progressDiv.style.opacity = '1';
 
     progressDiv.innerHTML = `
         <button id="progress_close_btn">CLOSE</button>
@@ -50,18 +51,24 @@ function render() {
         <button id="progress_rankings_btn">RANKINGS</button>
     `
 
-
+    // On close click: close and empty main container
     document.getElementById("progress_close_btn").addEventListener('click', () => {
         progressDiv.style.padding = '0'
         progressDiv.style.height = '0';
-        progressDiv.innerHTML = "";
+        progressDiv.style.opacity = '0';
     })
 }
 
-// TO DO
-// Transitions
-// Height on.... everything?!?!
-
+/*
+TO DO
+- Transitions (not just height but everything in the container really)
+- Height on... everything?!?!
+    - Mostly to ensure that the height adjusts to fit all badges, but still work with transitions
+- Hover on badges to get descripton
+- Load correct badges from DB
+- Calculate and display correct rank + image + progress bar (these are just placeholders for now)
+- Clean up the code, waaay to many IDs and messy CSS?? 
+- What to display if youre at the top rank + how should the progress bar look then?
 
 /*
 function render () {
