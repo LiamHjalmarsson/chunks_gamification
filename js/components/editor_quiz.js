@@ -104,6 +104,7 @@ function render_quiz ({ element, container_dom }) {
 }
 function render_page({ question, container_dom }) {
 
+  console.log(question);
   const quiz_question_id = question?.quiz_question_id || "head";
   if (!container_dom) {
     container_dom = document.querySelector(`#quiz_page_id_${quiz_question_id}`);

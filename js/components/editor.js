@@ -96,6 +96,7 @@ function render({ element }) {
   components[element.kind].forEach(component => {
     const container_dom = document.createElement("div");
     container_dom.classList.add("editor_item");
+    container_dom.classList.add("hello");
     list_dom.append(container_dom);
     renderers["render_" + component]({ element, container_dom });
   });
@@ -343,5 +344,7 @@ function render_amanuens({ element, container_dom }) {
 }
 
 function render_quiz({ element, container_dom }) {
+  console.log(element, "this needed");
+  console.log(container_dom, "this needed");
   editor_quiz.render_quiz({ element, container_dom });
 }
