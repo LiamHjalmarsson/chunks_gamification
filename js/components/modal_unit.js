@@ -236,6 +236,7 @@ function render_checks ({ element, container_dom }) {
 
   const users_unit = state_io.state.users_units.find(u => u.unit_id === element.unit_id);
   const is_quiz = element.kind === "quiz";
+  const is_exercise = element.kind === "exercise";
   const is_ready = is_unit_ready({ element });
 
   console.log("is_ready", is_ready);
@@ -256,6 +257,7 @@ function render_checks ({ element, container_dom }) {
       <div class="checks_container">
 
         ${check_box_html("question")}
+        ${is_exercise && is_quiz ? "" : check_box_html("quiz")}
         ${is_quiz ? "" : check_box_html("complete")}
 
       </div>
@@ -279,6 +281,9 @@ function render_checks ({ element, container_dom }) {
         exercise: "Jag har (äntlingen?) klarat övningen utan att kolla på lösningen",
         video: "Jag förstår allt som sägs i denna video",
         assignment: "Jag har lämnat in denna uppgift och fått G på den",
+      }, 
+      quiz: {
+        video: "Jag har sätt videon och redo att skapa quiz frågor",
       }
     };
 
@@ -424,14 +429,21 @@ function patch_users_unit (event) {
   const value = type === "checkbox" ? event.target.checked : event.target.value;
   const { field_name, element } = JSON.parse(event.target.dataset.update_data);
   
-  SubPub.publish({
-    event: "db::patch::users_units::request",
-    detail: { params: {
-      field_name,
-      value,
-      unit_id: element.unit_id,
-      user_id: state_io.state.user.user_id,
-    }}
-  });
+  if ( field_name === "check_quiz" ) {
+    SubPub.publish({
+      event: "render_user_addQuiz",
+      detail: { element: state_io.state.units.find(u => u.unit_id === element.unit_id) } // User may have edited element and it has been updated in State
+    });
 
+  } else {
+    SubPub.publish({
+      event: "db::patch::users_units::request",
+      detail: { params: {
+        field_name,
+        value,
+        unit_id: element.unit_id,
+        user_id: state_io.state.user.user_id,
+      }}
+    });
+  }
 }

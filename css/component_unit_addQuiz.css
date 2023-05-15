@@ -1,0 +1,38 @@
+.quiz_pageUserQuiz {
+    padding: 5px;
+    border: .5px solid var(--color_accent_1);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+.quiz_pageUserQuiz > div > textarea {
+    min-height: 150px;
+    height: 100%;
+    width: 100%;
+    font-size: var(--fsz_quiz_small);
+    border: .5px solid var(--color_accent_1);
+}
+
+.optionsQuiz > ul {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.option_item {
+    display: flex;
+}
+
+.option_item > div {
+    display: flex;
+    justify-content: center;
+}
+
+.option_item > div:nth-child(2) {
+    width: 100%;
+}
+
+.option_item > div > textarea {
+    width: 100%;
+}
