@@ -120,3 +120,53 @@ function renderNewQuestion(unitID) {
 
     qsContainer.append(questionName);
 }
+
+console.log(getRandomQuestion("403"));
+
+function getRandomQuestion(unitID) {
+  let allQuestions = state_io.state.quiz_questions;
+  let unitQuestions = allQuestions.filter(question => question.unit_id === unitID);
+
+  //Checks if user already answered the question
+  let usersQuizAnswers =  state_io.state.quiz_answers;
+  let allIDsOfAnsweredQuestions = usersQuizAnswers.map(answer => answer.quiz_question_id);
+  
+  //Removes dublicates
+  let answeredQuestionsIDs = [...new Set(allIDsOfAnsweredQuestions)];
+
+  //Non-answered questions
+  let nonAnsweredUnitQuestions = [];
+
+  unitQuestions.forEach(question => {
+    if(!answeredQuestionsIDs.includes(question.quiz_question_id)){
+      nonAnsweredUnitQuestions.push(question);
+    }
+  });
+  
+  if(unitQuestions.length != 0){
+    if (nonAnsweredUnitQuestions.length != 0){
+
+      let randomNumber = Math.floor(Math.random() * nonAnsweredUnitQuestions.length);
+
+      /*
+        while(answeredQuestionsIDs.includes(nonAnsweredUnitQuestions[randomNumber].quiz_question_id)) {
+        randomNumber = Math.floor(Math.random() * nonAnsweredUnitQuestions.length);
+      }
+      */
+    
+      /*
+      SubPub.publish({
+        event: "db::update::user_questionAnswered::request",
+        detail: { params: { randomQuestion }}
+    });
+    */
+      let randomQuestion = nonAnsweredUnitQuestions[randomNumber];
+
+      return randomQuestion;
+    }else{
+      return "You have already answered all the questions!";
+    }
+  }else{
+    return "There is no question created for this Unit!";
+  }
+}
