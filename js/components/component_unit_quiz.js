@@ -5,7 +5,118 @@ export default {}
 
 ;(() => {
 
-
-
-
+    SubPub.subscribe({
+        event: "render_unit_getQuiz",
+        listener: render
+    });
+    
 })();
+
+let counter = 0;
+
+function render() {
+    let quizContainer = document.createElement("div");
+    quizContainer.classList.add("quizContainer");
+
+    let headerContainer = document.createElement("div");
+    headerContainer.classList.add("headerContainer");
+
+    let closeQuizButton = document.createElement("button");
+    closeQuizButton.classList.add("button");
+    closeQuizButton.innerText = "Close";
+
+    closeQuizButton.addEventListener("click", ()=>{
+        quizContainer.remove();
+        counter = 0;
+    });
+
+    let unitName = document.createElement("h3");
+    unitName.classList.add("unitName");
+    unitName.innerText = "unit name";
+
+    let currentStreak = document.createElement("p");
+    //currentStreak.innerText = state_io.state.user.currentStreak;
+    currentStreak.classList.add("currentStreak");
+
+    let questionContainer = document.createElement("div");
+    questionContainer.classList.add("questionContainer");
+
+    let optionsContainer = document.createElement("div");
+    optionsContainer.classList.add("optionsContainer");
+    
+    renderNewQuestion(unitID);
+
+    questionContainer.append(optionsContainer);
+    headerContainer.append(closeQuizButton, unitName, currentStreak);
+    quizContainer.append(headerContainer, questionContainer);
+
+    document.body.append(quizContainer);
+}
+
+function renderNewQuestion(unitID) {
+    counter++;
+
+    let optsContainer = document.getElementsByClassName("optionsContainer");
+    optsContainer.innerHTML = "";
+
+    let qsContainer = document.getElementsByClassName("questionContainer");
+    qsContainer.innerHTML = "";
+
+    let question = getRandomQuestion(unitID);
+    let questionName = counter + "/3 - " + question.question;
+    
+    let options = question.options;
+
+    for (let i = 0; i < options.length; i++) {
+
+        const option = options[i];
+
+        let optionButton = document.createElement("button");
+        optionButton.classList.add("option");
+        optionButton.innerText = option;
+
+        option.addEventListener("click", ()=>{
+            //counter++;
+            let currentStreak = state_io.state.user.currentStreak;
+            
+            if(option.correct){
+                currentStreak++;
+                document.getElementsByClassName("currentStreak").innerText = currentStreak;
+
+                SubPub.publish({
+                    event: "db::update::user_currentStreak::request",
+                    detail: { params: { currentStreak }}
+                });
+
+                //Om current streak är större, vilket blir ny rekord för användaren
+                //Uppdatera databasen
+                if(currentStreak > state_io.state.user.highStreak){
+                    SubPub.publish({
+                        event: "db::update::user_highstreak::request",
+                        detail: { params: { currentStreak }}
+                    });
+                }
+
+                if(counter < 4){
+                    renderNewQuestion(unitID);
+                }
+            }else{
+                currentStreak = 0;
+                document.getElementsByClassName("currentStreak").innerText = currentStreak;
+                
+                SubPub.publish({
+                    event: "db::update::user_currentStreak::request",
+                    detail: { params: { currentStreak }}
+                });
+
+                if(counter < 4){
+                    renderNewQuestion(unitID);
+                }
+            }
+        })
+
+        optsContainer.append(option);
+    }
+
+    qsContainer.append(questionName);
+}
