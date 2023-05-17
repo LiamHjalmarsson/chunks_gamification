@@ -12,6 +12,10 @@ export default {}
     
 })();
 
+//Lägg till en nyckel "questionCounter" i varje unit som räknar antal fråga användaren svarat
+//Istället att ha en global variabel "counter" och för att ifall använder stänger sidan och vill fortsätta på quizet 
+//Och att inte starta från början - användaren som stängt sidan och vill fortsätta med quizet
+//Vilket ska vara högst 3
 let counter = 0;
 
 function render() {
@@ -81,13 +85,8 @@ function renderNewQuestion(unitID) {
             
             if(option.correct){
                 currentStreak++;
-                document.getElementsByClassName("currentStreak").innerText = currentStreak;
-
-                SubPub.publish({
-                    event: "db::update::user_currentStreak::request",
-                    detail: { params: { currentStreak }}
-                });
-
+                //Detta kan göras i api.php eller actions.php för att undvika (minska) fler förfrågningar till databasen
+                /*
                 //Om current streak är större, vilket blir ny rekord för användaren
                 //Uppdatera databasen
                 if(currentStreak > state_io.state.user.highStreak){
@@ -96,22 +95,23 @@ function renderNewQuestion(unitID) {
                         detail: { params: { currentStreak }}
                     });
                 }
-
-                if(counter < 4){
-                    renderNewQuestion(unitID);
-                }
+                */
             }else{
                 currentStreak = 0;
-                document.getElementsByClassName("currentStreak").innerText = currentStreak;
-                
-                SubPub.publish({
-                    event: "db::update::user_currentStreak::request",
-                    detail: { params: { currentStreak }}
-                });
+            }
 
-                if(counter < 4){
-                    renderNewQuestion(unitID);
-                }
+            //Testa detta istället för en if-sats
+            //option.correct ? currentStreak++ : currentStreak = 0;
+            
+            document.getElementsByClassName("currentStreak").innerText = currentStreak;
+
+            SubPub.publish({
+              event: "db::update::user_currentStreak::request",
+              detail: { params: { currentStreak }}
+            });
+
+            if(counter < 4){
+              renderNewQuestion(unitID);
             }
         })
 
@@ -153,13 +153,7 @@ function getRandomQuestion(unitID) {
         randomNumber = Math.floor(Math.random() * nonAnsweredUnitQuestions.length);
       }
       */
-    
-      /*
-      SubPub.publish({
-        event: "db::update::user_questionAnswered::request",
-        detail: { params: { randomQuestion }}
-    });
-    */
+
       let randomQuestion = nonAnsweredUnitQuestions[randomNumber];
 
       return randomQuestion;
