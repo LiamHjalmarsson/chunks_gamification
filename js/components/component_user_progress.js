@@ -13,38 +13,62 @@ export default {};
 function render() {
     const progressDiv = document.getElementById("content_user_progress");
     progressDiv.style.padding = '15px';
-    progressDiv.style.height = '15vw';
+    progressDiv.style.height = '20vw';
     progressDiv.style.opacity = '1';
 
     progressDiv.innerHTML = `
         <button id="progress_close_btn">CLOSE</button>
         <div id="progress_container">
             <div id="progress_rank">
-            <div id="progress_rank_current">Current rank: Silver</div>
-                <div id="progress_rank_img"></div>
-                <div id="progress_rank_progressbar">
-                <div><span>Next rank: Diamond</span></div>
-                </div>
-                <div id="progress_stats">
-                    <div>Current streak: 3</div>
-                    <div>Best streak: 5</div>
-                </div>
+                <div id="progress_rank_current">Current rank: Silver</div>
+                    <div id="progress_rank_img"></div>
+                    <div id="progress_rank_progressbar">
+                    <div><span>Next rank: Diamond</span></div>
+                    </div>
+                    <div id="progress_stats">
+                        <div>Current streak: 3</div>
+                        <div>Best streak: 5</div>
+                    </div>
             </div>
             <div id="progress_badges_container">
                 <div>Badges</div>
                 <div id="progress_badges">            
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
+                    <div class="progress_badge">
+                        <div class="badge_popup">50 fel</div>
+                    </div>
+                    <div class="progress_badge">
+                        <div class="badge_popup"></div>
+                    </div>
+                    <div class="progress_badge">
+                        <div class="badge_popup">Klarade av kapitel 1</div>
+                    </div>
+                    <div class="progress_badge">
+                        <div class="badge_popup"></div>
+                    </div>
+                    <div class="progress_badge">
+                    <div class="badge_popup"></div>
+                    </div>
+                    <div class="progress_badge">
+                        <div class="badge_popup"></div>
+                    </div>
+                    <div class="progress_badge">
+                    <div class="badge_popup"></div>
+                    </div>
+                    <div class="progress_badge">
+                        <div class="badge_popup"></div>
+                    </div>
+                    <div class="progress_badge">
+                    <div class="badge_popup"></div>
+                    </div>
+                    <div class="progress_badge">
+                        <div class="badge_popup"></div>
+                    </div>
+                    <div class="progress_badge">
+                    <div class="badge_popup"></div>
+                    </div>
+                    <div class="progress_badge">
+                        <div class="badge_popup"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -57,6 +81,25 @@ function render() {
         progressDiv.style.padding = '0'
         progressDiv.style.height = '0';
         progressDiv.style.opacity = '0';
+    })
+
+    document.querySelectorAll(".progress_badge").forEach(element => {
+        element.addEventListener('mouseover', (e) => { badgeHover(e.target) })
+    })
+}
+
+function badgeHover(badge) {
+    console.log(badge.fir)
+    badge.firstElementChild.style.height = "6vw";
+    badge.firstElementChild.style.width = "8vw";
+    badge.firstElementChild.style.opacity = "1";
+    // badge.firstElementChild.style.display = "block";
+
+    badge.addEventListener('mouseout', () => {
+        // badge.firstElementChild.style.display = "none";
+        badge.firstElementChild.style.height = "0";
+        badge.firstElementChild.style.width = "0";
+        badge.firstElementChild.style.opacity = "0";
     })
 }
 

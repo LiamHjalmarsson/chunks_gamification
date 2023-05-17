@@ -2,6 +2,7 @@
 
 import component_ranking from './js/components/component_ranking.js';
 import component_unit_addQuiz from './js/components/component_unit_addQuiz.js';
+import component_unit_addQuiz_page from './js/components/component_unit_addQuiz_page.js';
 import component_unit_quiz from './js/components/component_unit_quiz.js';
 import component_user_progress from './js/components/component_user_progress.js';
 import component_user_progress_header from './js/components/component_user_progress_header.js';
