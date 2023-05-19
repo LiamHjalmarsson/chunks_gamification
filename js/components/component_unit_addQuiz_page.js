@@ -12,30 +12,25 @@ export default {}
 
 })();
 
-function render ( { element, container_dom } ) {
-
-    console.log(element);
-    container_dom.id = "quiz_editor_id_" + element.unit_id;
-    container_dom.classList.add("editor_quiz");
+function render ( { element, container } ) {
+    container.classList.add("editor_quiz");
 
     let list_dom = document.createElement("ul");
-    container_dom.appendChild(list_dom);
+    container.appendChild(list_dom);
 
     for (let i = 0; i < 4; i++) {
-        let page_dom = document.createElement("li");
-        page_dom.classList.add("quiz_pageUserQuiz");
-        list_dom.append(page_dom);
+        let page = document.createElement("li");
+        page.classList.add("quiz_pageUserQuiz");
+        list_dom.append(page);
 
-        render_page(page_dom, i);
+        render_page(page, i);
     }
-
 }
 
-function render_page (page_dom, index) {
-
+function render_page (page, index) {
     if (index === 0) {
-        page_dom.id = `quiz_page_id_head`;
-        page_dom.innerHTML = `
+        page.id = `quiz_page_id_head`;
+        page.innerHTML = `
             <div> 
                 <label> Questions </label>
             </div>
@@ -44,47 +39,33 @@ function render_page (page_dom, index) {
             </div>
         `
     } else {
-        page_dom.id = `quiz_page_id_${index}`;
-
-        page_dom.innerHTML = `
+        page.id = `quiz_page_id_${index}`;
+        page.classList.add("studentQuizPage");
+        page.innerHTML = `
             <div class="question">
-                <textarea class="textArea${index}"></textarea>
+                <textarea class="textArea${index} questionQuizStudent"></textarea>
             </div>
-            <div class="options${index} optionsQuiz">
-                <ul></ul>
+            <div class="options${index} userOptions">
+                <ul class="optionsQuizStudent"></ul>
             </div>
         `
         for (let i = 0; i < 4; i++) {
-            let optionDom = document.createElement("div");
-            optionDom.classList.add("option_item");
-            document.querySelector(`.options${index} > ul`).append(optionDom);
+            let option = document.createElement("div");
+            option.classList.add("option_item");
+            document.querySelector(`.options${index} > ul`).append(option);
 
-            render_option(optionDom);
+            render_option(option);
         }
-
-        let question_textarea_dom = page_dom.querySelector(`.textArea${index}`);
-        question_textarea_dom.addEventListener("change", patch_question);
-
-        function patch_question() {
-
-            let _question = {
-                question: question_textarea_dom.value,
-            };
-        
-        }
-        
     }
-
-
 }
 
-function render_option (optionDom) {
-    optionDom.innerHTML = `
+function render_option (option) {
+    option.innerHTML = `
         <div>
             <input type="checkbox">
         </div>
         <div>
-            <textarea></textarea>
+            <textarea class="quizStudentAnswer"></textarea>
         </div>
     `
 }
