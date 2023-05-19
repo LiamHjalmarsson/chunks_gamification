@@ -36,3 +36,28 @@
 .option_item > div > textarea {
     width: 100%;
 }
+
+.questionQuizStudent {
+    width: 300px;
+    height: 150px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+}
+
+.quizStudentAnswer {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    resize: none;
+}
+
+.optionsQuizStudent {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

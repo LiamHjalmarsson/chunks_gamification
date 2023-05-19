@@ -289,11 +289,12 @@ function render_checks ({ element, container_dom }) {
 
     const id = `check_box_${which}_${element.unit_id}`;
     const checked = (users_unit && users_unit[`check_${which}`]) ? "checked": "";
+    const quizStudent = which === "quiz" ? "studentCheckBox" : "";
     const disabled = !is_ready ? "disabled" : "";
 
     return `
         <div class="check_holder">
-          <input type="checkbox" ${checked} class="updatable" id="${id}" ${disabled}
+          <input type="checkbox" ${checked} class="updatable ${quizStudent}" id="${id}" ${disabled}
               data-update_data='${JSON.stringify({
                 field_name: 'check_' + which,
                 element
