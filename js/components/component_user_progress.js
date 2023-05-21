@@ -83,12 +83,13 @@ function renderBadges() {
 function renderBadge(b) {
     let badgeContainer = document.getElementById("progress_badges");
     let badgeDiv = document.createElement('div');
-    let badgeDescription = (state_io.state.badges.find(badge => badge.badge_id == b)).description;
-    badgeDiv.innerHTML = `<div class="badge_popup">${badgeDescription}</div>`
+    let badgeInfo = (state_io.state.badges.find(badge => badge.badge_id == b))
+    badgeDiv.innerHTML = `<div class="badge_popup">${badgeInfo.description}</div>`
     badgeDiv.classList.add("progress_badge")
-    badgeDiv.style.backgroundImage = `url(media/badges/badge${b}.png)`
+    badgeDiv.style.backgroundImage = `url(media/badges/${badgeInfo.img}.png)`
     badgeContainer.appendChild(badgeDiv)
 
+    // Badge hover
     document.querySelectorAll(".progress_badge").forEach(element => {
         element.addEventListener('mouseover', (e) => { badgeHover(e.target) })
     })
@@ -96,15 +97,15 @@ function renderBadge(b) {
 
 // HOVER ON BADGE
 function badgeHover(badge) {
-    badge.firstElementChild.style.height = "6vw";
-    badge.firstElementChild.style.width = "7vw";
+    //badge.firstElementChild.style.height = "6vw";
+    //badge.firstElementChild.style.width = "7vw";
     badge.firstElementChild.style.opacity = "1";
     // badge.firstElementChild.style.display = "block";
 
     badge.addEventListener('mouseout', () => {
         // badge.firstElementChild.style.display = "none";
-        badge.firstElementChild.style.height = "0";
-        badge.firstElementChild.style.width = "0";
+        //badge.firstElementChild.style.height = "0";
+        //badge.firstElementChild.style.width = "0";
         badge.firstElementChild.style.opacity = "0";
     })
 }
@@ -119,6 +120,24 @@ function renderProgressRanking() {
 function renderRanking() {
 
 }
+
+
+function tryPatchBadges() {
+    // let userBadges = state_io.state.user.badges;
+    // userBadges = userBadges.slice(0, -1);
+    // let newBadge = 2.4;
+    // userBadges = userBadges + "," + newBadge + "]";
+    // console.log(userBadges)
+
+    let userBadges = "[2.1, 5.8, 2.4]"
+    SubPub.publish({
+        event: `db::patch::badges::request`,
+        detail: { params: { user_id: state_io.state.user.user_id, badges: userBadges } }
+    });
+}
+
+setTimeout(tryPatchBadges, 2000)
+
 
 
 

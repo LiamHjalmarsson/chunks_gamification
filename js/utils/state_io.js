@@ -58,12 +58,6 @@ export default {
       }
     },
     {
-      events: "db::get::badges::received",
-      middleware: (response, params) => {
-        State.badges = response.badges;
-      }
-    },
-    {
       events: ["db::get::date_time::received"],
       middleware: () => { }
     },
@@ -303,6 +297,17 @@ export default {
       }
     },
 
+    // BADGES
+    {
+      events: "db::get::badges::received",
+      middleware: (response, params) => {
+        State.badges = response.badges;
+      }
+    },
+    {
+      events: "db::patch::badges::received",
+      middleware: () => { }
+    }
   ];
 
   subscriptions.forEach(sb => {

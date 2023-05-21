@@ -36,7 +36,6 @@ export default {}
       "db::get::user::request",
       "db::get::users::request",
       "db::get::course::request",
-      "db::get::badges::request",
 
       // USER
       "db::delete::user::request",
@@ -83,6 +82,9 @@ export default {}
       "db::patch::quiz_option::request",
       "db::post::quiz_option::request",
 
+      // BADGES
+      "db::get::badges::request",
+      "db::patch::badges::request"
     ];
 
     events.forEach(event => {
@@ -236,11 +238,11 @@ async function _fetch(data) {
   let middle;
 
   try {
-
     console.log("Requesting", body.action);
     const _response = await fetch(request);
     middle = _response.headers.get("Content-Type").includes("text") ? "text" : "json";
     let data = await _response[middle]();
+
 
     SHOW_RAW_RESPONSE && console.log(data);
 

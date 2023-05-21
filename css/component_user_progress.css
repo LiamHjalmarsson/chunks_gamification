@@ -140,16 +140,22 @@ justify-content: center;
 }
 
 .badge_popup{
-    width: 0;
-    height: 0;
+    width: 8vw;
+    height: 5vw;
     background-color: var(--color_back_1);
     position: absolute;
     box-shadow: 0px 0px 10px gray;
     border-radius: 10px;
     /* display: none; */
     opacity: 0;
-    transition: height var(--t_fast_transition), width var(--t_fast_transition), opacity var(--t_fast_transition); 
+    transition: opacity var(--t_fast_transition); 
+    /* transition: height var(--t_fast_transition), width var(--t_fast_transition), opacity var(--t_fast_transition);  */
     pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    text-align: center;
 }
 
 
