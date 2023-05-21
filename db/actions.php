@@ -94,6 +94,18 @@ function GET_users ($params, $pdo) {
 }
 
 
+
+function GET_badges($params, $pdo){
+  //return array_from_query($pdo, "SELECT * FROM badges;");
+
+  return [
+    "data" => [
+      "badges" => array_from_query($pdo, "SELECT * FROM badges;")
+    ]
+  ];
+}
+
+
 // PATCHER
 function PATCH ($params, $pdo) {
 
@@ -297,8 +309,6 @@ function POST_chapter ($params, $pdo) {
 
   $sql = "INSERT INTO chapters (name, course_id, spot) VALUES ('$name', $course_id, $spot)";
   $pdo->query($sql);
-  $chapter_id = $pdo->lastInsertId();
-
   return [
     "data" => [
       "chapter" => _get_chapter($chapter_id, $pdo),

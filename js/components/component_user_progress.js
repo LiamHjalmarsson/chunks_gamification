@@ -33,65 +33,71 @@ function render() {
             <div id="progress_badges_container">
                 <div>Badges</div>
                 <div id="progress_badges">            
-                    <div class="progress_badge">
-                        <div class="badge_popup">50 fel</div>
-                    </div>
-                    <div class="progress_badge">
-                        <div class="badge_popup"></div>
-                    </div>
-                    <div class="progress_badge">
-                        <div class="badge_popup">Klarade av kapitel 1</div>
-                    </div>
-                    <div class="progress_badge">
-                        <div class="badge_popup"></div>
-                    </div>
-                    <div class="progress_badge">
-                    <div class="badge_popup"></div>
-                    </div>
-                    <div class="progress_badge">
-                        <div class="badge_popup"></div>
-                    </div>
-                    <div class="progress_badge">
-                    <div class="badge_popup"></div>
-                    </div>
-                    <div class="progress_badge">
-                        <div class="badge_popup"></div>
-                    </div>
-                    <div class="progress_badge">
-                    <div class="badge_popup"></div>
-                    </div>
-                    <div class="progress_badge">
-                        <div class="badge_popup"></div>
-                    </div>
-                    <div class="progress_badge">
-                    <div class="badge_popup"></div>
-                    </div>
-                    <div class="progress_badge">
-                        <div class="badge_popup"></div>
-                    </div>
                 </div>
             </div>
         </div>
         <button id="progress_rankings_btn">RANKINGS</button>
     `
-    fillProgressRanking()
 
-    // On close click: close and empty main container
+    // On close click
     document.getElementById("progress_close_btn").addEventListener('click', () => {
         progressDiv.style.padding = '0'
         progressDiv.style.height = '0';
         progressDiv.style.opacity = '0';
     })
 
+    // On ranking click
+    document.getElementById("progress_rankings_btn").addEventListener('click', () => {
+        SubPub.publish({
+            event: "render_ranking"
+        });
+    })
+
+    renderProgressRanking()
+    renderBadges()
+}
+
+// RENDER ALL BADGES
+function renderBadges() {
+    let userBadges = state_io.state.user.badges;
+
+    // If no badges yet
+    if (userBadges == "[]") {
+        document.getElementById("progress_badges").innerHTML = "<div>Inga badges ännu!</div>"
+    }
+
+    // If at least one badge
+    else {
+        // Remove first and last character [] and split on ,
+        userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
+
+        // Checking if the badge belongs to the current course
+        userBadges.forEach(badge => {
+            if (badge.split('.')[0] == state_io.state.course.course_id)
+                renderBadge(badge.replace('.', ''))
+        });
+    }
+}
+
+// RENDER A SINGLE BADGE
+function renderBadge(b) {
+    let badgeContainer = document.getElementById("progress_badges");
+    let badgeDiv = document.createElement('div');
+    let badgeDescription = (state_io.state.badges.find(badge => badge.badge_id == b)).description;
+    badgeDiv.innerHTML = `<div class="badge_popup">${badgeDescription}</div>`
+    badgeDiv.classList.add("progress_badge")
+    badgeDiv.style.backgroundImage = `url(media/badges/badge${b}.png)`
+    badgeContainer.appendChild(badgeDiv)
+
     document.querySelectorAll(".progress_badge").forEach(element => {
         element.addEventListener('mouseover', (e) => { badgeHover(e.target) })
     })
 }
 
+// HOVER ON BADGE
 function badgeHover(badge) {
-    console.log(badge.fir)
     badge.firstElementChild.style.height = "6vw";
-    badge.firstElementChild.style.width = "8vw";
+    badge.firstElementChild.style.width = "7vw";
     badge.firstElementChild.style.opacity = "1";
     // badge.firstElementChild.style.display = "block";
 
@@ -103,20 +109,17 @@ function badgeHover(badge) {
     })
 }
 
-function fillProgressRanking() {
+function renderProgressRanking() {
     // ADD: IMAGE AND RANK
 
     // Highest streak
     document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: ${state_io.state.user.high_Streak}`;
 }
 
-const badges = [
-    {
-        badge: 1,
-        description: "Du har lyckats svara fel 20 gånger på raken!"
-    },
-    {}
-]
+function renderRanking() {
+
+}
+
 
 
 /*

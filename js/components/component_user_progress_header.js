@@ -4,10 +4,23 @@ import { SubPub } from "../utils/subpub.js";
 export default {};
 
 ; (() => {
+    // When course is done, request badges. 
+    // Passar inte att hämta badges här, vet ej var annars dock?
     SubPub.subscribe({
         event: "db::get::course::done",
+        listener: () => {
+            SubPub.publish({
+                event: "db::get::badges::request",
+                detail: {}
+            });
+        }
+    });
+    // When badges are done, render progress header
+    SubPub.subscribe({
+        event: "db::get::badges::done",
         listener: render
     });
+
 })();
 
 function render() {
