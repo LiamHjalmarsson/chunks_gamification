@@ -192,6 +192,8 @@ async function _post (data) {
       body: JSON.stringify(body)
   });
 
+  console.log(request);
+
   return await _fetch({ request, headers, ...data });
 
 }
@@ -231,13 +233,15 @@ async function _patch (data) {
 }
 async function _fetch (data) {
 
+  console.log(data);
   let { request, body } = data;
   let middle;
 
   try {
-
     console.log("Requesting", body.action );
     const _response = await fetch(request);
+
+    console.log(_response);
     middle = _response.headers.get("Content-Type").includes("text") ? "text" : "json";
     let data = await _response[middle]();
   
