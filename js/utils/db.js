@@ -44,7 +44,8 @@ export default {}
 
     // USERS_UNITS
     "db::patch::users_units::request",
-
+    "db::patch::users_units_questionsAnswered::request",
+    
     // UNITS
     "db::delete::unit::request",
     "db::patch::unit::request",

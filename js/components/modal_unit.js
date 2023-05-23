@@ -74,6 +74,17 @@ function close_modal () {
 
 function render ({ element }) {
   
+  //sparar unit_id till localstorage
+  //localStorage.setItem("currentUnitID", element.unit_id);
+
+  SubPub.publish({
+    event: "render_unit_quiz",
+    detail: {
+        //unitID:element.unit_id
+        unitID:"660"
+    }
+  });
+
   const dom = document.querySelector("#modal .content");
   dom.classList.add(element.kind);
 

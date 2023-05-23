@@ -653,7 +653,6 @@ function PATCH_users_units ($params, $pdo) {
   
 }
 
-
 // QUIZ ANSWER
 function POST_quiz_answer ($params, $pdo) {
 
