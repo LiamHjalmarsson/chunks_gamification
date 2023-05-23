@@ -6,7 +6,7 @@ export default {}
 ;(() => {
 
     SubPub.subscribe({
-        event: "render_unit_getQuiz",
+        event: "render_unit_quiz",
         listener: render
     });
     
