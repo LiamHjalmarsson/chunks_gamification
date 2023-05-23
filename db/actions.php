@@ -93,7 +93,6 @@ function GET_users ($params, $pdo) {
 
 }
 
-
 // PATCHER
 function PATCH ($params, $pdo) {
 
@@ -213,6 +212,27 @@ function PATCH ($params, $pdo) {
 // QUIZ USER random 
 
 // BADGES
+function GET_badges($params, $pdo){
+  //return array_from_query($pdo, "SELECT * FROM badges;");
+
+  return [
+    "data" => [
+      "badges" => array_from_query($pdo, "SELECT * FROM badges;")
+    ]
+  ];
+}
+
+function PATCH_badges($params, $pdo){
+  $user_id = $params["user_id"];
+  $badges = $params["badges"];
+  $pdo -> query("UPDATE users SET badges = '$badges' WHERE user_id = $user_id");
+
+  return [
+    "data" => [
+      "badges" => array_from_query($pdo, "SELECT badges FROM users WHERE user_id = $user_id;")
+    ]
+  ];
+}
 
 // STREAK 
 
@@ -297,8 +317,6 @@ function POST_chapter ($params, $pdo) {
 
   $sql = "INSERT INTO chapters (name, course_id, spot) VALUES ('$name', $course_id, $spot)";
   $pdo->query($sql);
-  $chapter_id = $pdo->lastInsertId();
-
   return [
     "data" => [
       "chapter" => _get_chapter($chapter_id, $pdo),

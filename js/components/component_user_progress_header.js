@@ -4,10 +4,23 @@ import { SubPub } from "../utils/subpub.js";
 export default {};
 
 ; (() => {
+    // When course is done, request badges. 
+    // Passar inte att hämta badges här, vet ej var annars dock?
     SubPub.subscribe({
         event: "db::get::course::done",
+        listener: () => {
+            SubPub.publish({
+                event: "db::get::badges::request",
+                detail: {}
+            });
+        }
+    });
+    // When badges are done, render progress header
+    SubPub.subscribe({
+        event: "db::get::badges::done",
         listener: render
     });
+
 })();
 
 function render() {
@@ -48,13 +61,13 @@ function fillProgressHeader() {
 
     // If at least one badge
     else {
-        let stateBadges = (state_io.state.user.badges).replaceAll(' ', '');
-        // Remove first and last character [] and split on ,
-        let badges = (stateBadges.substring(1, stateBadges.length - 1)).split(',');
-        let recentBadge = badges[badges.length - 1]
+        let userBadges = (state_io.state.user.badges.substring(1, state_io.state.user.badges.length - 1)).split(',').reverse();
+        let recentBadge = userBadges.find(b => b.split('.')[0] == state_io.state.course.course_id).replace('.', '');
+        //let badgeImg = (state_io.state.badges.find(badge => badge.badge_id == recentBadge)).img;
+        let badgeImg = "badge";
 
         document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: ";
-        document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "url(" + `https://cdn-icons-png.flaticon.com/512/3135/3135783.png` + ")";
+        document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "url(" + `media/badges/${badgeImg}.png` + ")";
     }
 
     // Rank
