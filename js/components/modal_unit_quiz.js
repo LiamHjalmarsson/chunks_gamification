@@ -90,34 +90,40 @@ const prefix_navigation_id = "question_navigation_id_";
 
 function render_quiz({ element, container_dom }) {
 
-  if (!container_dom) {
-    container_dom = document.querySelector("#modal_quiz");
+  if (container_dom === undefined) { 
+    // document.querySelector("#editor").classList.remove("hidden");
+    // document.querySelector(".content").classList.remove("hidden");
+    // document.querySelector("#editor > .content").innerHTML = "";
   } else {
-    container_dom.id = "modal_quiz";
-  }
-
-  container_dom.innerHTML = `
-    <div id="quiz_navigation"></div>
-    <div id="quiz_page"></div>
-    <div id="quiz_option_correct" class="hidden"></div>
-  `;
-
-  const current_spot = get_current_spot({ element });
-  
-  // QUESTIONS (NAVIGATION)
-  const questions = get_unit_quiz_questions({ element });
-  const navigation_dom = container_dom.querySelector("#quiz_navigation");
-  questions.forEach((question, index) => {
-    const nav_item_dom = document.createElement("div");
-    navigation_dom.append(nav_item_dom);
-    if (index >= current_spot) {
-      nav_item_dom.classList.add("inactive");
+    if (!container_dom) {
+      container_dom = document.querySelector("#modal_quiz");
+    } else {
+      container_dom.id = "modal_quiz";
     }
-    render_question_navigation({ question, container_dom: nav_item_dom });
-  });
-
-  // GO TO CURRENT PAGE
-  navigation_dom.querySelector(`.question_navigation:nth-of-type(${current_spot})`).click();
+  
+    container_dom.innerHTML = `
+      <div id="quiz_navigation"></div>
+      <div id="quiz_page"></div>
+      <div id="quiz_option_correct" class="hidden"></div>
+    `;
+  
+    const current_spot = get_current_spot({ element });
+    
+    // QUESTIONS (NAVIGATION)
+    const questions = get_unit_quiz_questions({ element });
+    const navigation_dom = container_dom.querySelector("#quiz_navigation");
+    questions.forEach((question, index) => {
+      const nav_item_dom = document.createElement("div");
+      navigation_dom.append(nav_item_dom);
+      if (index >= current_spot) {
+        nav_item_dom.classList.add("inactive");
+      }
+      render_question_navigation({ question, container_dom: nav_item_dom });
+    });
+  
+    // GO TO CURRENT PAGE
+    navigation_dom.querySelector(`.question_navigation:nth-of-type(${current_spot})`).click();
+  }
 
 }
 
