@@ -732,19 +732,25 @@ function DELETE_quiz_option ($params, $pdo) {
   ];
 }
 function POST_quiz_option ($params, $pdo) {
+  $quiz_question_id = $params["question"]["quiz_question_id"] ;
 
-  $quiz_question_id = $params["question"]["quiz_question_id"];
-  
   $pdo->query("INSERT INTO quiz_options(quiz_question_id) VALUES($quiz_question_id)");
   $quiz_option_id = $pdo->lastInsertId();
+
+  // if ($params["option"]) {
+  //   $value = $params["option"];
+  //   $value = "'$value'";
+  //   $field = $params["option"];
+  //   $pdo -> query ("UPDATE quiz_options SET $field = $value WHERE quiz_option_id = $quiz_option_id;");
+  // }
 
   return [
     "data" => [
       "option" => _get_quiz_option($quiz_option_id, $pdo),
     ]
   ];  
-
 }
+
 function PATCH_quiz_option ($params, $pdo) {
 
   $quiz_option_id = $params["option"]["quiz_option_id"];
@@ -823,6 +829,15 @@ function POST_quiz_question ($params, $pdo) {
   
   $pdo->query("INSERT INTO quiz_questions(unit_id, spot) VALUES($unit_id, $spot)");
   $quiz_question_id = $pdo->lastInsertId();
+
+  if ($params["unit"]["question"] !== "") {
+    $quiz_question_id = $params["unit"]["quiz_question_id"];
+    $fields = ["question"];
+    foreach ($fields as $question) {
+      $value = $params["unit"][$question];
+      $pdo -> query ("UPDATE quiz_questions SET $question = '$value' WHERE quiz_question_id = $quiz_question_id");
+    }
+  }
 
   return [
     "data" => [
