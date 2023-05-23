@@ -26,8 +26,6 @@ function render( { element } ) {
         element_id: element_id,
     });
 
-    console.log(container_edit);
-
     container_edit.innerHTML = `
         <h2>Quiz questions: ${element.name}, (${element.kind}). ${element_kind}_ID: ${element_id}</h2>
         <ul></ul>
@@ -37,10 +35,8 @@ function render( { element } ) {
         </div>
     `;
 
-    // har vi 
     let list_container = container_edit.querySelector("ul");
 
-    // har vi utan redners[componentes rad 100]
     let container = document.createElement("div");
     container.classList.add("editor_item");
     list_container.append(container);
@@ -48,7 +44,6 @@ function render( { element } ) {
     SubPub.publish({
         event: "render_user_addQuiz_page",
         detail: {
-            element: element,
             container: container
         }
     });
@@ -61,7 +56,6 @@ function render( { element } ) {
 
     container_edit.querySelector(".userQuiz_save").addEventListener("click", update); 
 
-    // CLOSE VIA CLICK ON BACKGROUND or PRESS KEY ESC
     document.querySelector("#editor").addEventListener("click", e => {
         if (e.target.id === "editor") {
             document.querySelector("#editor").classList.add("hidden");
@@ -78,42 +72,77 @@ function render( { element } ) {
         }
     });
 
+    console.log(element);
+    console.log(state_io.state);
     function update () {
+        let nextQustionId = parseInt(state_io.state.quiz_questions[state_io.state.quiz_questions.length - 1].quiz_question_id);
+        let lastOptionId = parseInt(state_io.state.quiz_options[state_io.state.quiz_options.length - 1].quiz_option_id);
+        let counter = 0; 
+
         document.querySelectorAll(".studentQuizPage").forEach(page => {
+            nextQustionId++; 
+            counter++;
+
             let textArea = page.querySelector("textarea");
             let checkOption = page.querySelectorAll(".optionsQuizStudent > div"); 
             
             let optionSelected = Array.from(checkOption).some(option => option.querySelector("input[type='checkbox']").checked);
-            console.log(element);
-    
-            if (textArea.value !== "" && optionSelected) {
 
-                // vad behöver vi här 
-                let optionsQuiz = {
+            if (textArea.value !== "" && optionSelected) {
+                let quizQuestion = {
                     chapter_id: element.chapter_id,
+                    question: textArea.value,
+                    quiz_question_id: nextQustionId.toString(),
                     section_id: element.section_id,
                     unit_id: element.unit_id,
-                    option: textArea.value,
-                    // quiz_question_id: ???
-                    // quiz_option_id: ???
-                    // correct: 
-                    // option: 
+                    spot: counter
                 } 
 
-                console.log(optionsQuiz);
-                // SubPub.publish({
-                //     event: "db::post::quiz_question::request",
-                //     detail: {
-                //         params: {
-                //         }
-                //     }
-                // });
-            } else {
+                SubPub.publish({
+                    event: "db::post::quiz_question::request",
+                    detail: { params: { unit: quizQuestion } }
+                }); 
+
+                let optionsQuiz = {
+                    chapter_id: element.chapter_id,
+                    correct: false,
+                    quiz_option_id: 0,
+                    quiz_question_id: nextQustionId.toString(),
+                    section_id: element.section_id,
+                    unit_id: element.unit_id,
+                    option: "",
+                } 
+
+                checkOption.forEach(option => {
+                    lastOptionId++; 
+                    optionsQuiz.quiz_option_id = lastOptionId.toString();
+
+                    console.log(lastOptionId);
+                    optionsQuiz.option = option.childNodes[3].firstElementChild.value; 
+
+                    if (option.childNodes[1].firstElementChild.checked) {
+                        optionsQuiz.correct = true;
+                    } else {
+                        optionsQuiz.correct = false;
+                    }
+
+                    SubPub.publish({
+                        event: "db::post::quiz_option::request",
+                        detail: { params: { question: quizQuestion } }
+                    });
+
+                    SubPub.publish({
+                        event: "db::patch::quiz_option::request",
+                        detail: { params: { optionsQuiz } }
+                    });
+                });
+            } 
+            else {
                 if (textArea.value === "") {
-    
+                    console.log("no question entered");
                 }
                 if (!optionSelected) {
-    
+                    console.log("no option selected");
                 }
             }
         });

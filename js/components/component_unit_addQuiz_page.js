@@ -12,7 +12,7 @@ export default {}
 
 })();
 
-function render ( { element, container } ) {
+function render ( { container } ) {
     container.classList.add("editor_quiz");
 
     let list_dom = document.createElement("ul");
