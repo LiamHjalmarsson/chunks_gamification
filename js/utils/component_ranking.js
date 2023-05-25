@@ -6,9 +6,6 @@ import { SubPub } from "../utils/subpub.js";
 export const ranking = { calculateRank, calculatePoints, calculateNextRank };
 ; (() => {
 
-    console.log("hello")
-    setTimeout(calculatePoints, 2000)
-
 })();
 
 // Calculates current rank
