@@ -21,6 +21,11 @@ export default {};
         listener: render
     });
 
+    // When current/high streak are updated
+    SubPub.subscribe({
+        event: " db::patch::streak::done",
+        listener: render
+    });
 
 })();
 

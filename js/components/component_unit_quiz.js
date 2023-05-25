@@ -55,7 +55,7 @@ function render(arg) {
       let streakP = document.createElement("p");
       streakP.classList.add("currentStreak");
       
-      if(state_io.state.user.current_streak != NaN){
+      if(state_io.state.user.current_streak != null){
         streakP.innerHTML = parseInt(state_io.state.user.current_streak);
       }else{
         streakP.innerHTML = 0;
