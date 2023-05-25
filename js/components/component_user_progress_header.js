@@ -29,19 +29,18 @@ export default {};
 
 })();
 
-//Körs första gången användaren loggar in
-//Då är dessa två nycklar är null
-if(state_io.state.user.high_Streak == null && state_io.state.user.current_streak == null){
-    let currentStreak = 0;
-
-    SubPub.publish({
-        event: "db::patch::streak::request",
-        detail: { params: { currentStreak, user_id:state_io.state.user.user_id }}
-    });
-}
-
-
 function render() {
+    //Körs första gången användaren loggar in
+    //Då är dessa två nycklar är null
+    if(state_io.state.user.high_Streak == null && state_io.state.user.current_streak == null){
+        let currentStreak = 0;
+
+        SubPub.publish({
+            event: "db::patch::streak::request",
+            detail: { params: { currentStreak, user_id:state_io.state.user.user_id }}
+        });
+    }
+
     const progressHeader = document.getElementById("progress_header")
 
     // Display ranking header (otherwise hidden until course has been chosen)
