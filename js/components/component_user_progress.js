@@ -1,6 +1,5 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
-import { ranking } from "../utils/component_ranking.js";
 
 export default {};
 
@@ -20,23 +19,50 @@ function render() {
     progressDiv.style.height = '20vw';
 
     progressDiv.style.opacity = '1';
+
     progressDiv.innerHTML = `
         <button id="progress_close_btn">CLOSE</button>
         <div id="progress_container">
             <div id="progress_rank">
-                <div id="progress_rank_current"></div>
+
+            <div id="progress_rank_current">Current rank: Silver</div>
+                <div id="progress_rank_img"></div>
+                <div id="progress_rank_progressbar">
+                <div><span>Next rank: Diamond</span></div>
+                </div>
+                <div id="progress_stats">
+                    <div>Current streak: 3</div>
+                    <div>Best streak: 5</div>
+                </div>
+
+                <div id="progress_rank_current">Current rank: Silver</div>
                     <div id="progress_rank_img"></div>
                     <div id="progress_rank_progressbar">
-                    <div><span></span></div>
+                    <div><span>Next rank: Diamond</span></div>
                     </div>
                     <div id="progress_stats">
                         <div>Current streak: 3</div>
                         <div>Best streak: 5</div>
                     </div>
+
             </div>
             <div id="progress_badges_container">
                 <div>Badges</div>
                 <div id="progress_badges">            
+
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+
                 </div>
             </div>
         </div>
@@ -125,36 +151,44 @@ function badgeHover(badge) {
     })
 }
 
-// RENDER PROGRESS OF RANKING
 function renderProgressRanking() {
-    // Current rank (img + text)
-    let rank = ranking.calculateRank()
-    document.getElementById("progress_rank_img").style.backgroundImage = `url(../media/${rank.toLowerCase()}.png)`
-    document.getElementById("progress_rank_current").innerHTML = `Current rank: ${rank}`
-
-    // Next rank (progress + text)
-    document.querySelector("#progress_rank_progressbar > div > span").innerHTML = `Next rank: ${ranking.calculateNextRank().nextRank}`;
-    document.querySelector("#progress_rank_progressbar > div").style.width = `${ranking.calculateNextRank().percentageDone}%`;
+    // ADD: IMAGE AND RANK
 
     // Highest streak
     document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: ${state_io.state.user.high_Streak}`;
 }
 
-// Add new badge to user
-// newBadge param to be formatted: course.badgenr
-// Example for course 2 with badge number 13  =  2.13
-// This will correlate with the badge in the database with the id 213
-function patchBadges(newBadge) {
-    let userBadges = state_io.state.user.badges;
-    userBadges = userBadges.slice(0, -1).replace(" ", "");
-    userBadges = userBadges + "," + newBadge + "]";
-    console.log(userBadges)
 
+const badges = [
+    {
+        badge: 1,
+        description: "Du har lyckats svara fel 20 gånger på raken!"
+    },
+    {}
+]
+
+function renderRanking() {
+
+}
+
+
+function tryPatchBadges() {
+    // let userBadges = state_io.state.user.badges;
+    // userBadges = userBadges.slice(0, -1);
+    // let newBadge = 2.4;
+    // userBadges = userBadges + "," + newBadge + "]";
+    // console.log(userBadges)
+
+    let userBadges = "[2.1, 5.8, 2.4]"
     SubPub.publish({
         event: `db::patch::badges::request`,
         detail: { params: { user_id: state_io.state.user.user_id, badges: userBadges } }
     });
 }
+
+setTimeout(tryPatchBadges, 2000)
+
+
 
 /*
 TO DO
