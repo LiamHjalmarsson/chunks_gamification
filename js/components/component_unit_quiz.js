@@ -55,8 +55,8 @@ function render(arg) {
       let streakP = document.createElement("p");
       streakP.classList.add("currentStreak");
       
-      if(state_io.state.user.currentStreak != NaN){
-        streakP.innerHTML = parseInt(state_io.state.user.currentStreak);
+      if(state_io.state.user.current_streak != NaN){
+        streakP.innerHTML = parseInt(state_io.state.user.current_streak);
       }else{
         streakP.innerHTML = 0;
       }
@@ -147,10 +147,10 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
     let optionButton = document.createElement("div");
     optionButton.classList.add("quizOption");
     optionButton.innerText = option.option;
-    let currentStreak = 0;
+    let currentStreak = state_io.state.user.current_streak;
 
-    if(state_io.state.user.currentStreak != NaN){
-      currentStreak = parseInt(state_io.state.user.currentStreak);
+    if(state_io.state.user.currentStreak == NaN){
+      currentStreak = 0;
     }
 
     optionButton.addEventListener("click", ()=>{
@@ -164,7 +164,8 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
         //Testa detta istället för en if-sats
         //option.correct ? currentStreak++ : currentStreak = 0;
         
-        document.getElementsByClassName("currentStreak").innerText = currentStreak;
+        document.getElementsByClassName("currentStreak").innerHTML = currentStreak;
+        console.log(currentStreak);
 
         SubPub.publish({
           event: "db::patch::streak::request",
