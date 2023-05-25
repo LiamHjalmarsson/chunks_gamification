@@ -64,18 +64,18 @@ export default { render }
 
   SubPub.subscribe({
     event: "db::post::units_quizs_questions::done",
-    listener: ((unitId) => {
-      let element = state_io.state.units.find(u => u.unit_id === unitId);
+   
+    listener: (({response, params}) => {
+      let element = state_io.state.units.find(u => u.unit_id === response.unitId);
       render(element); 
 
       //Startar quiz
-      // SubPub.publish({
-      //   event: "render_unit_quiz",
-      //   detail: {
-      //       unitID:element.unit_id
-      //   }
-      // });
-
+      SubPub.publish({
+        event: "render_unit_quiz",
+        detail: {
+            unitID:element.unit_id
+        }
+      });
     })
   });
 
@@ -93,13 +93,15 @@ function render ({ element }) {
   //sparar unit_id till localstorage
   //localStorage.setItem("currentUnitID", element.unit_id);
 
-  //console.log(element);
-  // SubPub.publish({
-  //   event: "render_unit_quiz",
-  //   detail: {
-  //       unitID:element.unit_id
-  //   }
-  // });
+  /*
+  console.log(element);
+  SubPub.publish({
+    event: "render_unit_quiz",
+    detail: {
+        unitID:element.unit_id
+    }
+  });
+  */
 
   const dom = document.querySelector("#modal .content");
   dom.classList.add(element.kind);

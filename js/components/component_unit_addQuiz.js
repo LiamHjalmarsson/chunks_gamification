@@ -73,6 +73,7 @@ function render( { element } ) {
     });
 
     console.log(state_io.state);
+
     function update () {
         let lastQuestionId = parseInt(state_io.state.quiz_questions[state_io.state.quiz_questions.length - 1].quiz_question_id);
         let lastOptionId = parseInt(state_io.state.quiz_options[state_io.state.quiz_options.length - 1].quiz_option_id);
@@ -115,7 +116,7 @@ function render( { element } ) {
                     quiz_question_id: lastQuestionId.toString(),
                     section_id: element.section_id,
                     unit_id: element.unit_id,
-                    spot: counter
+                    spot: counter,
                 } 
     
                 questionsQuizArray.push(quizQuestion);
@@ -161,7 +162,8 @@ function render( { element } ) {
                 event: "db::post::units_quizs_questions::request",
                 detail: { params: { 
                     questions: questionsQuizArray,
-                    options: questionsOptionsArray
+                    options: questionsOptionsArray,
+                    course_id:element.course_id
                     }
                 }
             });
