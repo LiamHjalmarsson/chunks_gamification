@@ -754,19 +754,20 @@ function POST_quiz_option ($params, $pdo) {
 function POST_units_quizs_questions ($params, $pdo) {
   $questions = $params["questions"];
   $options = $params["options"];
-
+  
   foreach($questions as $question) { 
     $unit_id = $question["unit_id"];
-
+    
     $n_questions = count(_get_quiz_questions($unit_id, $pdo));
     $spot = $n_questions + 1;
     
     $pdo->query("INSERT INTO quiz_questions(unit_id, spot) VALUES($unit_id, $spot)");
     $quiz_question_id = $pdo->lastInsertId();
-
+    
     $quiz_question_id = $question["quiz_question_id"];
+    
+    $field = "question";
 
-    $field = ["question"];
     $value = $question["question"];
     $pdo -> query ("UPDATE quiz_questions SET $field = '$value' WHERE quiz_question_id = $quiz_question_id");
 
@@ -774,7 +775,7 @@ function POST_units_quizs_questions ($params, $pdo) {
       if ($option["quiz_question_id"] === $question["quiz_question_id"]) {
         $pdo->query("INSERT INTO quiz_options(quiz_question_id) VALUES($quiz_question_id)");
         $quiz_option_id = $pdo->lastInsertId();
-        $postion = ["option"];
+        $postion = "option";
 
         $value = $option["option"];
         $value = "'$value'";
@@ -788,7 +789,6 @@ function POST_units_quizs_questions ($params, $pdo) {
       "unitId" => $questions[0]["unit_id"],
     ]
   ];  
-
 }
 
 function PATCH_quiz_option ($params, $pdo) {
