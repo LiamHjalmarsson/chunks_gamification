@@ -16,16 +16,18 @@ export default {};
             });
         }
     });
-    // When badges are done, render progress header
+
+    // When badges have been put in state, render progress header
     SubPub.subscribe({
         event: "db::get::badges::done",
         listener: render
     });
 
+    // When rank has been updated OR a badge had been added, render header again
     SubPub.subscribe({
-        events: ["db::get::badges::done", "db::get::userBadges::done"],
+        events: ["db::patch::userRank::done", "db::patch::userBadges::done"],
         listener: render
-    });
+    })
 })();
 
 function render() {
@@ -78,6 +80,5 @@ function fillProgressHeader() {
     }
 
     // Rank
-    let rank = ranking.calculateRank()
-    document.getElementById("progress_header_rank_img").style.backgroundImage = `url(../media/${rank.toLowerCase()}.png)`
+    document.getElementById("progress_header_rank_img").style.backgroundImage = `url(../media/${state_io.state.user.rank.toLowerCase()}.png)`;
 }

@@ -10,17 +10,6 @@ export default {};
         event: "render_user_progress",
         listener: render
     });
-
-    // Om badges har ändras, hämta och uppdatera state
-    SubPub.subscribe({
-        event: "db::patch::badges::done",
-        listener: () => {
-            SubPub.publish({
-                event: "db::get::userBadges::request",
-                detail: { params: { user_id: state_io.state.user.user_id } }
-            });
-        }
-    });
 })();
 
 function render() {
@@ -141,9 +130,8 @@ function badgeHover(badge) {
 // RENDER PROGRESS OF RANKING
 function renderProgressRanking() {
     // Current rank (img + text)
-    let rank = ranking.calculateRank()
-    document.getElementById("progress_rank_img").style.backgroundImage = `url(../media/${rank.toLowerCase()}.png)`
-    document.getElementById("progress_rank_current").innerHTML = `Current rank: ${rank}`
+    document.getElementById("progress_rank_img").style.backgroundImage = `url(../media/${state_io.state.user.rank.toLowerCase()}.png)`
+    document.getElementById("progress_rank_current").innerHTML = `Current rank: ${state_io.state.user.rank}`
 
     // Next rank (progress + text)
     document.querySelector("#progress_rank_progressbar > div > span").innerHTML = `Next rank: ${ranking.calculateNextRank().nextRank}`;
@@ -153,23 +141,6 @@ function renderProgressRanking() {
     document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: ${state_io.state.user.high_Streak}`;
 }
 
-// Add new badge to user
-// newBadge param to be formatted: course.badgenr
-// Example for course 2 with badge number 13  =  2.13
-// This will correlate with the badge in the database with the id 213
-function patchBadges(newBadge) {
-    let userBadges = state_io.state.user.badges;
-    userBadges = userBadges.slice(0, -1).replace(" ", "");
-    userBadges = userBadges + "," + newBadge + "]";
-
-    SubPub.publish({
-        event: `db::patch::badges::request`,
-        detail: { params: { user_id: state_io.state.user.user_id, badges: userBadges } }
-    });
-}
-
-
-//setTimeout(() => { patchBadges(2.3) }, 3000)
 /*
 TO DO
 - Transitions (not just height but everything in the container really)
