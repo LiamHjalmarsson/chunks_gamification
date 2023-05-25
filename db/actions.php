@@ -214,10 +214,18 @@ function PATCH ($params, $pdo) {
 // BADGES
 function GET_badges($params, $pdo){
   //return array_from_query($pdo, "SELECT * FROM badges;");
-
   return [
     "data" => [
       "badges" => array_from_query($pdo, "SELECT * FROM badges;")
+    ]
+  ];
+}
+
+function GET_userBadges($params, $pdo){
+  $user_id = $params["user_id"];
+  return [
+    "data" => [
+      "badges" =>   array_from_query($pdo, "SELECT badges from users WHERE user_id = '$user_id'")
     ]
   ];
 }

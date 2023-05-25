@@ -5,7 +5,6 @@ import { SubPub } from "../utils/subpub.js";
 
 export const ranking = { calculateRank, calculatePoints, calculateNextRank };
 ; (() => {
-
 })();
 
 // Calculates current rank

@@ -5,14 +5,27 @@ import { ranking } from "../utils/component_ranking.js";
 export default {};
 
 ; (() => {
+    // On header click
     SubPub.subscribe({
         event: "render_user_progress",
         listener: render
+    });
+
+    // Om badges har ändras, hämta och uppdatera state
+    SubPub.subscribe({
+        event: "db::patch::badges::done",
+        listener: () => {
+            SubPub.publish({
+                event: "db::get::userBadges::request",
+                detail: { params: { user_id: state_io.state.user.user_id } }
+            });
+        }
     });
 })();
 
 function render() {
     const progressDiv = document.getElementById("content_user_progress");
+    progressDiv.innerHTML = "";
     progressDiv.style.padding = '15px';
 
     progressDiv.style.height = '15vw';
@@ -148,7 +161,6 @@ function patchBadges(newBadge) {
     let userBadges = state_io.state.user.badges;
     userBadges = userBadges.slice(0, -1).replace(" ", "");
     userBadges = userBadges + "," + newBadge + "]";
-    console.log(userBadges)
 
     SubPub.publish({
         event: `db::patch::badges::request`,
@@ -156,6 +168,8 @@ function patchBadges(newBadge) {
     });
 }
 
+
+//setTimeout(() => { patchBadges(2.3) }, 3000)
 /*
 TO DO
 - Transitions (not just height but everything in the container really)

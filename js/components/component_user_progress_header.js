@@ -22,11 +22,16 @@ export default {};
         listener: render
     });
 
-
+    SubPub.subscribe({
+        events: ["db::get::badges::done", "db::get::userBadges::done"],
+        listener: render
+    });
 })();
 
 function render() {
+
     const progressHeader = document.getElementById("progress_header")
+    progressHeader.innerHTML = "";
 
     // Display ranking header (otherwise hidden until course has been chosen)
     progressHeader.style.display = "";
@@ -65,12 +70,11 @@ function fillProgressHeader() {
     else {
         let userBadges = (state_io.state.user.badges.substring(1, state_io.state.user.badges.length - 1)).split(',').reverse();
         let recentBadge = userBadges.find(b => b.split('.')[0] == state_io.state.course.course_id).replace('.', '');
-        //let badgeImg = (state_io.state.badges.find(badge => badge.badge_id == recentBadge)).img;
-        let badgeImg = "badge";
-
-        document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: ";
-        document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "url(" + `https://cdn-icons-png.flaticon.com/512/3135/3135783.png` + ")";
-        document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "url(" + `media/badges/${badgeImg}.png` + ")";
+        setTimeout(() => {
+            let badgeImg = (state_io.state.badges.find(badge => badge.badge_id == recentBadge)).img;
+            document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: ";
+            document.querySelector("#progress_header_recentbadge div").style.backgroundImage = `url(media/badges/${badgeImg}.png)`;
+        }, 10)
     }
 
     // Rank
