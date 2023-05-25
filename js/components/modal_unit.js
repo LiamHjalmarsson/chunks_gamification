@@ -67,6 +67,15 @@ export default { render }
     listener: ((unitId) => {
       let element = state_io.state.units.find(u => u.unit_id === unitId);
       render(element); 
+
+      //Startar quiz
+      // SubPub.publish({
+      //   event: "render_unit_quiz",
+      //   detail: {
+      //       unitID:element.unit_id
+      //   }
+      // });
+
     })
   });
 
@@ -84,12 +93,11 @@ function render ({ element }) {
   //sparar unit_id till localstorage
   //localStorage.setItem("currentUnitID", element.unit_id);
 
-  console.log(element);
+  //console.log(element);
   // SubPub.publish({
   //   event: "render_unit_quiz",
   //   detail: {
   //       unitID:element.unit_id
-  //       // unitID:"666"
   //   }
   // });
 
