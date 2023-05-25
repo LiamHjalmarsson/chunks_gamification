@@ -149,9 +149,9 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
     optionButton.innerText = option.option;
     let currentStreak = state_io.state.user.current_streak;
 
-    if(state_io.state.user.currentStreak == NaN){
-      currentStreak = 0;
-    }
+    // if(state_io.state.user.currentStreak == NaN){
+    //   currentStreak = 0;
+    // }
 
     optionButton.addEventListener("click", ()=>{
 
