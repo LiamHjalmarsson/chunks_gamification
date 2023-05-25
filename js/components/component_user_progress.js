@@ -14,9 +14,12 @@ export default {};
 function render() {
     const progressDiv = document.getElementById("content_user_progress");
     progressDiv.style.padding = '15px';
-    progressDiv.style.height = '20vw';
-    progressDiv.style.opacity = '1';
 
+    progressDiv.style.height = '15vw';
+
+    progressDiv.style.height = '20vw';
+
+    progressDiv.style.opacity = '1';
     progressDiv.innerHTML = `
         <button id="progress_close_btn">CLOSE</button>
         <div id="progress_container">
@@ -40,12 +43,23 @@ function render() {
         <button id="progress_rankings_btn">RANKINGS</button>
     `
 
+    fillProgressRanking()
+
+    // On close click: close and empty main container
+
+
     // On close click
+
     document.getElementById("progress_close_btn").addEventListener('click', () => {
         progressDiv.style.padding = '0'
         progressDiv.style.height = '0';
         progressDiv.style.opacity = '0';
     })
+
+}
+
+function fillProgressRanking() {
+
 
     // On ranking click
     document.getElementById("progress_rankings_btn").addEventListener('click', () => {
