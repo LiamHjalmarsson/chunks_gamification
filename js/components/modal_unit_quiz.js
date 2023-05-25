@@ -241,17 +241,21 @@ function render_answer_correct({ element }) {
 
   const message = is_quiz_solved({ element }) ? "Quiz Complete!" : "Next Question";
 
-  document.getElementById("quiz_option_correct").innerHTML = `
-    <div class="content">
-      <div>Correct!</div>
-      <button>${message}</button>
-    </div>
-  `;
-  document.getElementById("quiz_option_correct").classList.remove("hidden");
+  if(document.getElementById("quiz_option_correct") != null){
 
-  document.querySelector("#quiz_option_correct button").addEventListener("click", next_question);
-  function next_question () {
-    render_quiz({ element });
+    document.getElementById("quiz_option_correct").innerHTML = `
+      <div class="content">
+        <div>Correct!</div>
+        <button>${message}</button>
+      </div>
+    `;
+    document.getElementById("quiz_option_correct").classList.remove("hidden");
+  
+    document.querySelector("#quiz_option_correct button").addEventListener("click", next_question);
+    function next_question () {
+      render_quiz({ element });
+    }
+
   }
 
 }

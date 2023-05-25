@@ -54,12 +54,7 @@ function render(arg) {
   
       let streakP = document.createElement("p");
       streakP.classList.add("currentStreak");
-      
-      if(state_io.state.user.current_streak != null){
-        streakP.innerHTML = parseInt(state_io.state.user.current_streak);
-      }else{
-        streakP.innerHTML = 0;
-      }
+      streakP.innerHTML = state_io.state.user.current_streak;
   
       let questionContainer = document.createElement("div");
       questionContainer.classList.add("questionContainer");
@@ -85,6 +80,9 @@ function renderNewQuestion(unitID, optionsContainer, questionContainer) {
 
     optionsContainer.innerHTML = "";
     questionContainer.innerHTML = "";
+    
+    document.getElementsByClassName("currentStreak").innerHTML = "";
+    document.getElementsByClassName("currentStreak").innerHTML = state_io.state.user.current_streak;
 
     let question = getRandomQuestion(unitID);
     questionContainer.innerHTML = counter + "/3 - " + question.question;
@@ -147,11 +145,7 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
     let optionButton = document.createElement("div");
     optionButton.classList.add("quizOption");
     optionButton.innerText = option.option;
-    let currentStreak = state_io.state.user.current_streak;
-
-    // if(state_io.state.user.currentStreak == NaN){
-    //   currentStreak = 0;
-    // }
+    let currentStreak = parseInt(state_io.state.user.current_streak);
 
     optionButton.addEventListener("click", ()=>{
 
@@ -164,9 +158,6 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
         //Testa detta istället för en if-sats
         //option.correct ? currentStreak++ : currentStreak = 0;
         
-        document.getElementsByClassName("currentStreak").innerHTML = currentStreak;
-        console.log(currentStreak);
-
         SubPub.publish({
           event: "db::patch::streak::request",
           detail: { params: { currentStreak, user_id:state_io.state.user.user_id }}
