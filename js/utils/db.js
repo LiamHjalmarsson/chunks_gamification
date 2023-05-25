@@ -41,6 +41,7 @@ export default {}
     "db::delete::user::request",
     "db::patch::user::request",
     "db::post::user::request",
+    "db::post::units_quizs_questions::request",
 
     // USERS_UNITS
     "db::patch::users_units::request",

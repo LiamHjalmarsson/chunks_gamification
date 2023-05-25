@@ -62,6 +62,13 @@ export default { render }
     }
   });
 
+  SubPub.subscribe({
+    event: "db::post::units_quizs_questions::done",
+    listener: ((unitId) => {
+      let element = state_io.state.units.find(u => u.unit_id === unitId);
+      render(element); 
+    })
+  });
 
 })();
 
@@ -77,13 +84,14 @@ function render ({ element }) {
   //sparar unit_id till localstorage
   //localStorage.setItem("currentUnitID", element.unit_id);
 
-  SubPub.publish({
-    event: "render_unit_quiz",
-    detail: {
-        //unitID:element.unit_id
-        unitID:"660"
-    }
-  });
+  console.log(element);
+  // SubPub.publish({
+  //   event: "render_unit_quiz",
+  //   detail: {
+  //       unitID:element.unit_id
+  //       // unitID:"666"
+  //   }
+  // });
 
   const dom = document.querySelector("#modal .content");
   dom.classList.add(element.kind);
