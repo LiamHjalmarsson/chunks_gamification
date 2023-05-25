@@ -1,5 +1,6 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
+import { ranking } from "../utils/component_ranking.js";
 
 export default {};
 
@@ -73,9 +74,6 @@ function fillProgressHeader() {
     }
 
     // Rank
-    /*
-        TO DO!
-        Add code for displaying correct rank img when calculation function is finished
-        + remove temporary image from CSS (component_user_progress_header.css)
-    */
+    let rank = ranking.calculateRank()
+    document.getElementById("progress_header_rank_img").style.backgroundImage = `url(../media/${rank.toLowerCase()}.png)`
 }
