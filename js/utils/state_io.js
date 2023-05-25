@@ -65,6 +65,13 @@ export default {
       events: ["db::get::badges::received"],
       middleware: () => { }
     },
+    {
+      events: ["db::patch::streak::received"],
+      middleware: (response, params) => {
+        State.user.current_streak = response.current_streak;
+        State.user.high_Streak = response.high_Streak;
+      }
+    },
 
     // USERS
     {

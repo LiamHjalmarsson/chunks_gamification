@@ -52,9 +52,14 @@ function render(arg) {
       unitName.classList.add("unitName");
       unitName.innerText = state_io.state.units.find(u => u.unit_id = arg.unitID).name;
   
-      let currentStreak = document.createElement("p");
-      currentStreak.classList.add("currentStreak");
-      currentStreak.innerText = state_io.state.user.currentStreak;
+      let streakP = document.createElement("p");
+      streakP.classList.add("currentStreak");
+      
+      if(state_io.state.user.currentStreak != NaN){
+        streakP.innerHTML = parseInt(state_io.state.user.currentStreak);
+      }else{
+        streakP.innerHTML = 0;
+      }
   
       let questionContainer = document.createElement("div");
       questionContainer.classList.add("questionContainer");
@@ -68,7 +73,7 @@ function render(arg) {
       renderNewQuestion(arg.unitID, optionsContainer, questionContainer);
   
       questionContainer.append(optionsContainer);
-      headerContainer.append(closeQuizButton, unitName, currentStreak);
+      headerContainer.append(closeQuizButton, unitName, streakP);
       quizContainer.append(headerContainer, questionContainer);
   
       document.getElementById("modal").append(quizContainer);
@@ -142,23 +147,16 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
     let optionButton = document.createElement("div");
     optionButton.classList.add("quizOption");
     optionButton.innerText = option.option;
+    let currentStreak = 0;
+
+    if(state_io.state.user.currentStreak != NaN){
+      currentStreak = parseInt(state_io.state.user.currentStreak);
+    }
 
     optionButton.addEventListener("click", ()=>{
-        let currentStreak = parseInt(state_io.state.user.currentStreak);
-        
+
         if(option.correct){
             currentStreak++;
-            //Detta kan göras i api.php eller actions.php för att undvika (minska) fler förfrågningar till databasen
-            /*
-            //Om current streak är större, vilket blir ny rekord för användaren
-            //Uppdatera databasen
-            if(currentStreak > state_io.state.user.highStreak){
-                SubPub.publish({
-                    event: "db::update::user_highstreak::request",
-                    detail: { params: { currentStreak }}
-                });
-            }
-            */
         }else{
             currentStreak = 0;
         }
@@ -169,7 +167,7 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
         document.getElementsByClassName("currentStreak").innerText = currentStreak;
 
         SubPub.publish({
-          event: "db::update::user_currentStreak::request",
+          event: "db::patch::streak::request",
           detail: { params: { currentStreak, user_id:state_io.state.user.user_id }}
         });
 
