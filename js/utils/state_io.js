@@ -65,6 +65,10 @@ export default {
       events: ["db::get::badges::received"],
       middleware: () => { }
     },
+    {
+      events: ["db::get::userBadges::received"],
+      middleware: (response) => { State.user.badges = response.badges[0].badges }
+    },
 
     // USERS
     {
