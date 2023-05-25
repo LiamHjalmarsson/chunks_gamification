@@ -66,14 +66,14 @@ export default { render }
     event: "db::post::units_quizs_questions::done",
    
     listener: (({response, params}) => {
-      let element = state_io.state.units.find(u => u.unit_id === response.unitId);
-      render(element); 
+      //let element = state_io.state.units.find(u => u.unit_id === response.unitId);
+      //render(element); 
 
       //Startar quiz
       SubPub.publish({
         event: "render_unit_quiz",
         detail: {
-            unitID:element.unit_id
+            unitID:response.unitId
         }
       });
     })

@@ -156,7 +156,7 @@ export default {
       }
     },
     {
-      events: [" db::post::units_quizs_questions::received"],
+      events: ["db::post::units_quizs_questions::received"],
       middleware: (response, params) => {
         State.quiz_questions = response.quiz_questions;
         State.quiz_options = response.quiz_options;

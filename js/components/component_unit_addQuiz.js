@@ -169,21 +169,8 @@ function render( { element } ) {
             });
 
         } else {
-            
             console.log("not question enterd");
-
         }
-
-        //Detta för att uppdatera state_io questions och options om vi inte hittar en annan lösning
-        // SubPub.publish({
-        //     event: "db::get::course::request",
-        //     detail: {
-        //       params: {
-        //         course_id: element.course_id,
-        //         user_id: state_io.state.user.user_id,
-        //       }
-        //     }
-        // });
     }
 }
 
