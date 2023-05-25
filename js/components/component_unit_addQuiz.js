@@ -74,10 +74,12 @@ function render( { element } ) {
 
     console.log(state_io.state);
 
+    
+
     if(state_io.state.user.current_streak == null){
 
         let currentStreak = 0;
-
+    
         SubPub.publish({
             event: "db::patch::streak::request",
             detail: { params: { currentStreak, user_id:state_io.state.user.user_id }}

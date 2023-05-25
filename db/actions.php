@@ -244,9 +244,14 @@ function PATCH_streak($params, $pdo){
 
   $high_Streak = array_from_query($pdo, "SELECT high_Streak FROM users WHERE user_id = $user_id;");
 
-  if($current_streak > $high_Streak || $high_Streak == null){
+  if($current_streak > $high_Streak){
     $pdo -> query("UPDATE users SET high_Streak = '$current_streak' WHERE user_id = $user_id");
   }
+  
+  if ($high_Streak == null) {
+  }
+  
+  $pdo -> query("UPDATE users SET high_Streak = '$current_streak' WHERE user_id = $user_id");
 
   return [
     "data" => [
