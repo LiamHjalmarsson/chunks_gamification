@@ -777,9 +777,16 @@ function POST_units_quizs_questions ($params, $pdo) {
         $quiz_option_id = $pdo->lastInsertId();
         $postion = "option";
 
-        $value = $option["option"];
-        $value = "'$value'";
-        $pdo -> query ("UPDATE quiz_options SET $postion = $value WHERE quiz_option_id = $quiz_option_id;");
+         // UPDATE FIELDS
+         $fields = ["option", "correct"];
+         foreach ($fields as $field) {
+           $value = $option[$field];
+           $value = "'$value'";
+           if ($field === "correct") {
+             $value = $option[$field] ? "true" : "false";
+           }
+           $pdo -> query ("UPDATE quiz_options SET $field = $value WHERE quiz_option_id = $quiz_option_id;");
+         }
       }
     }
   }
