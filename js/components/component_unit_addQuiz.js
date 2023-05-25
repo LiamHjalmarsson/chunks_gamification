@@ -123,12 +123,6 @@ function render( { element } ) {
                 //     detail: { params: { unit: quizQuestion } }
                 // }); 
 
-                SubPub.publish({
-                    event: "db::post::quiz_question::request",
-                    detail: { params: { unit: quizQuestion } }
-                }); 
-
-    
                 let optionsQuiz = {
                     chapter_id: element.chapter_id,
                     correct: false,
@@ -147,21 +141,13 @@ function render( { element } ) {
                 //     });
                 // });
 
-                checkOption.forEach(option => {
-                    SubPub.publish({
-                        event: "db::post::quiz_option::request",
-                        detail: { params: { question: quizQuestion } }
-                    });
-                });
-
-                setTimeout(() => {
+                // setTimeout(() => {
                     checkOption.forEach(option => {
                         lastOptionId++; 
                         optionsQuiz.quiz_option_id = lastOptionId.toString();
         
                         optionsQuiz.option = option.childNodes[3].firstElementChild.value; 
         
-                        console.log(option.childNodes[1].firstElementChild.checked);
                         if (option.childNodes[1].firstElementChild.checked) {
                             optionsQuiz.correct = true;
                         } else {
@@ -176,14 +162,14 @@ function render( { element } ) {
                         // });
 
         
-                        SubPub.publish({
-                            event: "db::patch::quiz_option::request",
-                            detail: { params: { option: optionsQuiz } }
-                        });
+                        // SubPub.publish({
+                        //     event: "db::patch::quiz_option::request",
+                        //     detail: { params: { option: optionsQuiz } }
+                        // });
 
         
                     });
-                }, 2000);
+                // }, 2000);
             });
 
 
