@@ -6,6 +6,7 @@
 
 #progress_header_rank_img{
     width: 25%;
+    background-image: url(../media/rank5.png);
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
