@@ -116,11 +116,18 @@ function render( { element } ) {
                     spot: counter
                 } 
     
+
                 questionsQuizArray.push(quizQuestion);
                 // SubPub.publish({
                 //     event: "db::post::quiz_question::request",
                 //     detail: { params: { unit: quizQuestion } }
                 // }); 
+
+                SubPub.publish({
+                    event: "db::post::quiz_question::request",
+                    detail: { params: { unit: quizQuestion } }
+                }); 
+
     
                 let optionsQuiz = {
                     chapter_id: element.chapter_id,
@@ -132,13 +139,21 @@ function render( { element } ) {
                     option: "",
                 } 
 
+
                 // checkOption.forEach(option => {
                 //     SubPub.publish({
                 //         event: "db::post::quiz_option::request",
                 //         detail: { params: { question: quizQuestion } }
                 //     });
                 // });
-    
+
+                checkOption.forEach(option => {
+                    SubPub.publish({
+                        event: "db::post::quiz_option::request",
+                        detail: { params: { question: quizQuestion } }
+                    });
+                });
+
                 setTimeout(() => {
                     checkOption.forEach(option => {
                         lastOptionId++; 
@@ -152,16 +167,25 @@ function render( { element } ) {
                         } else {
                             optionsQuiz.correct = false;
                         }
+
                         
                         questionsOptionsArray.push(optionsQuiz);
                         // SubPub.publish({
                         //     event: "db::patch::quiz_option::request",
                         //     detail: { params: { option: optionsQuiz } }
                         // });
+
+        
+                        SubPub.publish({
+                            event: "db::patch::quiz_option::request",
+                            detail: { params: { option: optionsQuiz } }
+                        });
+
         
                     });
                 }, 2000);
             });
+
 
             SubPub.publish({
                 event: "db::post::units_quizs_questions::request",
@@ -171,6 +195,7 @@ function render( { element } ) {
                     }
                 }
             });
+
         } else {
             
             console.log("not question enterd");

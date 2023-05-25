@@ -118,9 +118,13 @@ function render_quiz({ element, container_dom }) {
       if (index >= current_spot) {
         nav_item_dom.classList.add("inactive");
       }
+
       if(container_dom != null){
         render_question_navigation({ question, container_dom: nav_item_dom });
       }
+
+      render_question_navigation({ question, container_dom: nav_item_dom });
+
     });
   
     // GO TO CURRENT PAGE
