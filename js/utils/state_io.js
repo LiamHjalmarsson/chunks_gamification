@@ -68,8 +68,8 @@ export default {
     {
       events: ["db::patch::streak::received"],
       middleware: (response, params) => {
-        State.user.current_streak = response.current_streak.current_streak;
-        State.user.high_Streak = response.high_Streak.high_Streak;
+        State.user.current_streak = response.current_streak[0].current_streak;
+        State.user.high_Streak = response.high_Streak[0].high_Streak;
       }
     },
 
