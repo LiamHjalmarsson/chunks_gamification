@@ -65,7 +65,7 @@ function render(arg) {
       optionsContainer.innerHTML = "";
       questionContainer.innerHTML = "";
   
-      renderNewQuestion(arg.unitID, optionsContainer, questionContainer);
+      renderNewQuestion(arg.unitID, optionsContainer, questionContainer, streakP);
   
       questionContainer.append(optionsContainer);
       headerContainer.append(closeQuizButton, unitName, streakP);
@@ -75,21 +75,23 @@ function render(arg) {
     }
 }
 
-function renderNewQuestion(unitID, optionsContainer, questionContainer) {
+function renderNewQuestion(unitID, optionsContainer, questionContainer, streakP) {
     counter++;
 
     optionsContainer.innerHTML = "";
     questionContainer.innerHTML = "";
     
-    document.getElementsByClassName("currentStreak").innerHTML = "";
-    document.getElementsByClassName("currentStreak").innerHTML = state_io.state.user.current_streak;
+    streakP.textContent = "";
+    streakP.textContent = state_io.state.user.current_streak;
+
+    console.log(streakP);
 
     let question = getRandomQuestion(unitID);
     questionContainer.innerHTML = counter + "/3 - " + question.question;
   
     let options = state_io.state.quiz_options.filter(option => option.quiz_question_id == question.quiz_question_id);
 
-    renderOptions(options,optionsContainer, questionContainer, unitID);
+    renderOptions(options,optionsContainer, questionContainer, unitID, streakP);
 
 }
 
@@ -136,7 +138,7 @@ function getRandomQuestion(unitID) {
   }
 }
 
-function renderOptions(options, optionsContainer, questionContainer, unitID) {
+function renderOptions(options, optionsContainer, questionContainer, unitID, streakP) {
 
   for (let i = 0; i < options.length; i++) {
 
@@ -169,7 +171,7 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
         });
 
         if(counter < 3){
-          renderNewQuestion(unitID, optionsContainer, questionContainer);
+          renderNewQuestion(unitID, optionsContainer, questionContainer, streakP);
         }else{
           document.getElementById("closeQuizButton").click();
         }
