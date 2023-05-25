@@ -118,7 +118,13 @@ function render_quiz({ element, container_dom }) {
       if (index >= current_spot) {
         nav_item_dom.classList.add("inactive");
       }
+
+      if(container_dom != null){
+        render_question_navigation({ question, container_dom: nav_item_dom });
+      }
+
       render_question_navigation({ question, container_dom: nav_item_dom });
+
     });
   
     // GO TO CURRENT PAGE
@@ -145,39 +151,45 @@ function render_question_navigation ({ question, container_dom }) {
     function open_question () {
       document.querySelectorAll(".question_navigation").forEach(qn => qn.classList.remove("selected"));
       container_dom.classList.add("selected");
-      render_question_content({ question });
+      
+      if(container_dom != null){
+        render_question_content({ question });
+      }
     }  
   }
 
   // ANSWERED STATUS
   const status = state_io.get_quiz_question_status(question);
-  ["answered_no", "answered_correct", "answered_incorrect"].forEach(s => container_dom.classList.remove(s));
-  container_dom.classList.add(status);
+  if(container_dom != null){
+    ["answered_no", "answered_correct", "answered_incorrect"].forEach(s => container_dom.classList.remove(s));
+    container_dom.classList.add(status);
+  }
 
 }
 function render_question_content ({ question }) {
+  if(document.getElementById("quiz_page") != null){
+    const content_dom = document.getElementById("quiz_page");
+    content_dom.dataset.question = JSON.stringify(question);
 
-  const content_dom = document.getElementById("quiz_page");
-  content_dom.dataset.question = JSON.stringify(question);
+    // const question_html = question.question.replace(/ /g, "&nbsp;");
+    content_dom.innerHTML = `
+      <div class="question">
+        <div class="spot">(${question.spot})</div>
+        <div class="text">${question.question}</div>
+      </div>
+      <div class="options"></div>
+    `;
 
-  // const question_html = question.question.replace(/ /g, "&nbsp;");
-  content_dom.innerHTML = `
-    <div class="question">
-      <div class="spot">(${question.spot})</div>
-      <div class="text">${question.question}</div>
-    </div>
-    <div class="options"></div>
-  `;
-
-  // Show spaces in (potential) code in question text
-  let code_text = content_dom.querySelector(".text .code")?.innerHTML;
-  code_text && (content_dom.querySelector(".text .code").innerHTML = content_dom.querySelector(".text .code").innerHTML.replace(/ /g, "&nbsp;"));
+    // Show spaces in (potential) code in question text
+    let code_text = content_dom.querySelector(".text .code")?.innerHTML;
+    code_text && (content_dom.querySelector(".text .code").innerHTML = content_dom.querySelector(".text .code").innerHTML.replace(/ /g, "&nbsp;"));
 
 
-  render_question_options({ question });
+    render_question_options({ question });
 
-  // const element = state_io.state.units.find(u => u.unit_id === question.unit_id); 
-  // render_answer_correct({ element });
+    // const element = state_io.state.units.find(u => u.unit_id === question.unit_id); 
+    // render_answer_correct({ element });
+  }
 }
 function render_question_options({ question }) {
 

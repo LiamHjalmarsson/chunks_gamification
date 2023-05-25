@@ -30,6 +30,81 @@ export default {}
       return _string;
     }
 
+  const events = [
+
+    "db::get::login::request",
+    "db::get::user::request",
+    "db::get::users::request",
+    "db::get::course::request",
+    
+    // USER
+    "db::delete::user::request",
+    "db::patch::user::request",
+    "db::post::user::request",
+    "db::post::units_quizs_questions::request",
+
+    // USERS_UNITS
+    "db::patch::users_units::request",
+    "db::patch::users_units_questionsAnswered::request",
+    
+    // UNITS
+    "db::delete::unit::request",
+    "db::patch::unit::request",
+    "db::post::unit::request",
+
+    // SECTIONS
+    "db::delete::section::request",
+    "db::patch::section::request",
+    "db::post::section::request",
+
+    // DEPENDENCIES
+    "db::delete::dependencies::request",
+    "db::post::dependencies::request",
+
+    // CHAPTERS
+    "db::delete::chapter::request",
+    "db::patch::chapter::request",
+    "db::post::chapter::request",
+
+    // COURSES
+    "db::delete::course::request",
+    "db::patch::course::request",
+    "db::post::course::request",
+
+    // QUIZ_QUESTIONS
+    "db::post::quiz_question::request",
+    "db::patch::quiz_question::request",
+
+    // QUIZ ANSWERS
+    "db::get::date_time::request",
+    "db::post::quiz_answer::request",
+
+    // QUIZ OPTIONS
+    "db::delete::quiz_option::request",
+    "db::patch::quiz_option::request",
+    "db::post::quiz_option::request",
+    
+  ];
+
+  events.forEach( event => {
+
+    const parsed_event = SubPub.parseEvent(event);
+    const action = parsed_event.action;
+
+    SubPub.subscribe({
+      event,
+      listener: detail => {
+
+        let { params } = detail;
+
+        if (action !== "login") {
+          params = {
+            credentials: credentials_encode (state_io.state.user.user_token, state_io.state.user.user_id),
+            ...params,
+          };
+          console.log(params);
+        }
+      
     const events = [
 
       "db::get::login::request",

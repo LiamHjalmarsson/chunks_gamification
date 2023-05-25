@@ -21,6 +21,7 @@ export default {};
         listener: render
     });
 
+
 })();
 
 function render() {
@@ -67,6 +68,7 @@ function fillProgressHeader() {
         let badgeImg = "badge";
 
         document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: ";
+        document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "url(" + `https://cdn-icons-png.flaticon.com/512/3135/3135783.png` + ")";
         document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "url(" + `media/badges/${badgeImg}.png` + ")";
     }
 

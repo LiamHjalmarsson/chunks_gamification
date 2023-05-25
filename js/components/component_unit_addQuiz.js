@@ -72,12 +72,14 @@ function render( { element } ) {
         }
     });
 
-    console.log(element);
     console.log(state_io.state);
     function update () {
         let nextQustionId = parseInt(state_io.state.quiz_questions[state_io.state.quiz_questions.length - 1].quiz_question_id);
         let lastOptionId = parseInt(state_io.state.quiz_options[state_io.state.quiz_options.length - 1].quiz_option_id);
         let counter = 0; 
+
+        let questionsQuizArray = [];
+        let questionsOptionsArray = [];
 
         let studentQuizPages = document.querySelectorAll(".studentQuizPage"); 
 
@@ -114,10 +116,18 @@ function render( { element } ) {
                     spot: counter
                 } 
     
+
+                questionsQuizArray.push(quizQuestion);
+                // SubPub.publish({
+                //     event: "db::post::quiz_question::request",
+                //     detail: { params: { unit: quizQuestion } }
+                // }); 
+
                 SubPub.publish({
                     event: "db::post::quiz_question::request",
                     detail: { params: { unit: quizQuestion } }
                 }); 
+
     
                 let optionsQuiz = {
                     chapter_id: element.chapter_id,
@@ -128,13 +138,22 @@ function render( { element } ) {
                     unit_id: element.unit_id,
                     option: "",
                 } 
+
+
+                // checkOption.forEach(option => {
+                //     SubPub.publish({
+                //         event: "db::post::quiz_option::request",
+                //         detail: { params: { question: quizQuestion } }
+                //     });
+                // });
+
                 checkOption.forEach(option => {
                     SubPub.publish({
                         event: "db::post::quiz_option::request",
                         detail: { params: { question: quizQuestion } }
                     });
                 });
-    
+
                 setTimeout(() => {
                     checkOption.forEach(option => {
                         lastOptionId++; 
@@ -148,15 +167,35 @@ function render( { element } ) {
                         } else {
                             optionsQuiz.correct = false;
                         }
+
+                        
+                        questionsOptionsArray.push(optionsQuiz);
+                        // SubPub.publish({
+                        //     event: "db::patch::quiz_option::request",
+                        //     detail: { params: { option: optionsQuiz } }
+                        // });
+
         
                         SubPub.publish({
                             event: "db::patch::quiz_option::request",
                             detail: { params: { option: optionsQuiz } }
                         });
+
         
                     });
                 }, 2000);
             });
+
+
+            SubPub.publish({
+                event: "db::post::units_quizs_questions::request",
+                detail: { params: { 
+                    questions: questionsQuizArray,
+                    options: questionsOptionsArray
+                    }
+                }
+            });
+
         } else {
             
             console.log("not question enterd");
