@@ -85,7 +85,6 @@ export default {}
       "db::post::quiz_option::request",
 
       // BADGES
-      "db::get::badges::request",
       "db::patch::userBadges::request",
       "db::patch::userRank::request"
 

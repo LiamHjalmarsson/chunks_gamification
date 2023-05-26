@@ -9,10 +9,27 @@ export const ranking = { calculateRank, calculatePoints, calculateNextRank, patc
         event: "db::patch::userBadges::done",
         listener: calculateRank
     });
+
+    SubPub.subscribe({
+        event: "init_rank",
+        listener: calculateRank
+
+        // () => {
+        //     patchBadges(`${state_io.state.course.course_id}.${1}`)
+        //     // Patch rank in DB
+        //     SubPub.publish({
+        //         event: `db::patch::userRank::request`,
+        //         detail: { params: { user_id: state_io.state.user.user_id, rank: "Bronze" } }
+        //     });
+        //     // Give badge for latest rank
+        // }
+    })
 })();
+
 
 // Calculates current rank
 function calculateRank() {
+    console.log(state_io.state.user.rank)
     let rank;
     let badgenr;
     let totalPoints = calculatePoints()
@@ -96,17 +113,45 @@ function getLastDigit(number) {
 
 // Calculates total points
 function calculatePoints() {
-    let badges = [];
-    let userBadges = state_io.state.user.badges;
-    // Remove first and last character [] and split on ,
-    userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
-    // Checking if the badge belongs to the current course
-    userBadges.forEach(badge => {
-        if (badge.split('.')[0] == state_io.state.course.course_id)
-            badges.push(badge);
-    });
-    let totalPoints = parseInt(badges.length) + parseInt(state_io.state.user.high_Streak);
-    return totalPoints;
+
+    // If no badges and no high streak
+    if (state_io.state.user.badges == "[]" && !state_io.state.user.high_Streak) {
+        return 0;
+    }
+
+    // If no badges but a high streak
+    if (state_io.state.user.badges !== "[]" && state_io.state.user.high_Streak) {
+        return parseInt(state_io.state.user.high_Streak)
+    }
+
+    // If badges but no high streak
+    if (state_io.state.user.badges !== "[]" && !state_io.state.user.high_Streak) {
+        let badges = [];
+        let userBadges = state_io.state.user.badges;
+        // Remove first and last character [] and split on ,
+        userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
+        // Checking if the badge belongs to the current course
+        userBadges.forEach(badge => {
+            if (badge.split('.')[0] == state_io.state.course.course_id)
+                badges.push(badge);
+        });
+        let totalPoints = parseInt(badges.length);
+        return totalPoints;
+    }
+
+    if (state_io.state.user.badges !== "[]" && state_io.state.user.high_Streak) {
+        let badges = [];
+        let userBadges = state_io.state.user.badges;
+        // Remove first and last character [] and split on ,
+        userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
+        // Checking if the badge belongs to the current course
+        userBadges.forEach(badge => {
+            if (badge.split('.')[0] == state_io.state.course.course_id)
+                badges.push(badge);
+        });
+        let totalPoints = parseInt(badges.length) + parseInt(state_io.state.user.high_Streak);
+        return totalPoints;
+    }
 }
 
 // Add new badge to user
@@ -115,13 +160,17 @@ function calculatePoints() {
 // This will correlate with the badge in the database with the id 213
 function patchBadges(newBadge) {
     let userBadges = state_io.state.user.badges;
-    userBadges = userBadges.slice(0, -1).replace(" ", "");
-    userBadges = userBadges + "," + newBadge + "]";
-
+    if (userBadges == "[]") {
+        userBadges = `[${newBadge}]`
+    } else {
+        userBadges = userBadges.slice(0, -1);
+        userBadges = userBadges + "," + newBadge + "]";
+    }
+    console.log(userBadges)
     SubPub.publish({
         event: `db::patch::userBadges::request`,
         detail: { params: { user_id: state_io.state.user.user_id, badges: userBadges } }
     });
 }
 
-setTimeout(() => { patchBadges(2.3) }, 3000)
+//setTimeout(() => { patchBadges(3.4) }, 3000)

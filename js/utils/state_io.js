@@ -55,6 +55,7 @@ export default {
         State.quiz_questions = response.quiz_questions;
         State.quiz_options = response.quiz_options;
         State.quiz_answers = response.quiz_answers;
+        State.badges = response.badges;
       }
     },
     {
@@ -294,12 +295,6 @@ export default {
     },
 
     // BADGES & RANK
-    {
-      events: "db::get::badges::received",
-      middleware: (response, params) => {
-        State.badges = response.badges;
-      }
-    },
     {
       events: "db::patch::userBadges::received",
       middleware: (response) => { State.user.badges = response.badges[0].badges }

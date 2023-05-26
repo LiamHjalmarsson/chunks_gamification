@@ -5,22 +5,19 @@ import { ranking } from "../utils/component_ranking.js";
 export default {};
 
 ; (() => {
-    // When course is done, request badges. 
-    // Passar inte att hämta badges här, vet ej var annars dock?
     SubPub.subscribe({
         event: "db::get::course::done",
         listener: () => {
-            SubPub.publish({
-                event: "db::get::badges::request",
-                detail: {}
-            });
+            if (!state_io.state.user.rank) {
+                SubPub.publish({
+                    event: "init_rank",
+                    details: {}
+                })
+            }
+            else {
+                render()
+            }
         }
-    });
-
-    // When badges have been put in state, render progress header
-    SubPub.subscribe({
-        event: "db::get::badges::done",
-        listener: render
     });
 
     // When rank has been updated OR a badge had been added, render header again
@@ -31,7 +28,7 @@ export default {};
 })();
 
 function render() {
-
+    console.log(state_io.state)
     const progressHeader = document.getElementById("progress_header")
     progressHeader.innerHTML = "";
 
@@ -60,11 +57,15 @@ function render() {
 
 function fillProgressHeader() {
     // High streak
-    document.getElementById("progress_header_currentstreak").innerHTML = `Current streak: ${state_io.state.user.high_Streak}`
+    if (!state_io.state.user.high_Streak) {
+        document.getElementById("progress_header_currentstreak").innerHTML = `Current streak: No streak yet...`
+    } else {
+        document.getElementById("progress_header_currentstreak").innerHTML = `Current streak: ${state_io.state.user.high_Streak}`
+    }
 
     // If no badges yet
     if (state_io.state.user.badges == "[]") {
-        document.querySelector("#progress_header_recentbadge p").innerHTML = "No badges yet...";
+        document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: No badges yet...";
         document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "none";
     }
 
@@ -72,6 +73,7 @@ function fillProgressHeader() {
     else {
         let userBadges = (state_io.state.user.badges.substring(1, state_io.state.user.badges.length - 1)).split(',').reverse();
         let recentBadge = userBadges.find(b => b.split('.')[0] == state_io.state.course.course_id).replace('.', '');
+        console.log(state_io.state.badges)
         setTimeout(() => {
             let badgeImg = (state_io.state.badges.find(badge => badge.badge_id == recentBadge)).img;
             document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: ";
@@ -81,4 +83,7 @@ function fillProgressHeader() {
 
     // Rank
     document.getElementById("progress_header_rank_img").style.backgroundImage = `url(../media/${state_io.state.user.rank.toLowerCase()}.png)`;
+
 }
+
+//setTimeout(() => { ranking.patchBadges(2.1) }, 3000)

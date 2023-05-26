@@ -32,8 +32,8 @@ function render() {
                     <div><span></span></div>
                     </div>
                     <div id="progress_stats">
-                        <div>Current streak: 3</div>
-                        <div>Best streak: 5</div>
+                        <div></div>
+                        <div></div>
                     </div>
             </div>
             <div id="progress_badges_container">
@@ -44,32 +44,22 @@ function render() {
         </div>
         <button id="progress_rankings_btn">RANKINGS</button>
     `
-
-    fillProgressRanking()
-
-    // On close click: close and empty main container
-
-
     // On close click
-
     document.getElementById("progress_close_btn").addEventListener('click', () => {
         progressDiv.style.padding = '0'
         progressDiv.style.height = '0';
         progressDiv.style.opacity = '0';
     })
-
+    fillProgressRanking()
 }
 
 function fillProgressRanking() {
-
-
     // On ranking click
     document.getElementById("progress_rankings_btn").addEventListener('click', () => {
         SubPub.publish({
             event: "render_ranking"
         });
     })
-
     renderProgressRanking()
     renderBadges()
 }
@@ -130,52 +120,24 @@ function badgeHover(badge) {
 // RENDER PROGRESS OF RANKING
 function renderProgressRanking() {
     // Current rank (img + text)
-    document.getElementById("progress_rank_img").style.backgroundImage = `url(../media/${state_io.state.user.rank.toLowerCase()}.png)`
-    document.getElementById("progress_rank_current").innerHTML = `Current rank: ${state_io.state.user.rank}`
+    document.getElementById("progress_rank_img").style.backgroundImage = `url(../media/${state_io.state.user.rank.toLowerCase()}.png)`;
+    document.getElementById("progress_rank_current").innerHTML = `Current rank: ${state_io.state.user.rank}`;
 
     // Next rank (progress + text)
     document.querySelector("#progress_rank_progressbar > div > span").innerHTML = `Next rank: ${ranking.calculateNextRank().nextRank}`;
     document.querySelector("#progress_rank_progressbar > div").style.width = `${ranking.calculateNextRank().percentageDone}%`;
 
+    // Current streak
+    if (!state_io.state.user.current_streak) {
+        document.querySelector("#progress_stats > div:first-child").innerHTML = `Current streak: No streak yet...`;
+    } else {
+        document.querySelector("#progress_stats > div:first-child").innerHTML = `Current streak: ${state_io.state.user.current_streak}`;
+    }
+
     // Highest streak
-    document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: ${state_io.state.user.high_Streak}`;
+    if (!state_io.state.user.high_Streak) {
+        document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: No streak yet...`;
+    } else {
+        document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: ${state_io.state.user.high_Streak}`;
+    }
 }
-
-/*
-TO DO
-- Transitions (not just height but everything in the container really)
-- Height on... everything?!?!
-    - Mostly to ensure that the height adjusts to fit all badges, but still work with transitions
-- Hover on badges to get descripton
-- Load correct badges from DB
-- Calculate and display correct rank + image + progress bar (these are just placeholders for now)
-- Clean up the code, waaay to many IDs and messy CSS?? 
-- What to display if youre at the top rank + how should the progress bar look then?
-- Add current streak (new key in DB?)
-
-/*
-function render () {
-    töm div i content_course_open div i index.php
-    containerDiv 
-        button close
-            button lister click
-                töm div i content_course_open div i index.php
-         divisonContainer
-            divBadge
-                imageBadge
-            divProgressBar
-                progessBar
-            divStreaks
-                currentSteak
-                bestStreak
-        badgesContainer 
-            loop badges
-                badgeDiv
-                    imageBadge 
-                    ( imageBade hover text info ) 
-        buttonRanking
-            buttonRanking listner click 
-                publish 
-                    event: “render_ranking.”
-}
-*/
