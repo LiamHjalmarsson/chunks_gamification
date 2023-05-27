@@ -52,7 +52,12 @@ function render(arg) {
   
       let streakP = document.createElement("p");
       streakP.classList.add("currentStreak");
-      streakP.innerText = state_io.state.user.current_streak;
+      
+      if(state_io.state.user.current_streak == null){
+        streakP.innerText = 0;
+      }else{
+        streakP.innerText = state_io.state.user.current_streak;
+      }
 
       let questionContainer = document.createElement("div");
       questionContainer.classList.add("questionContainer");

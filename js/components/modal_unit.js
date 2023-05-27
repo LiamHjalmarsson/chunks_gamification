@@ -102,7 +102,6 @@ function render ({ element }) {
   //   }
   // });
 
-
   const dom = document.querySelector("#modal .content");
   dom.classList.add(element.kind);
 
