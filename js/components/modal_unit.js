@@ -93,15 +93,15 @@ function render ({ element }) {
   //sparar unit_id till localstorage
   //localStorage.setItem("currentUnitID", element.unit_id);
 
-  /*
-  console.log(element);
-  SubPub.publish({
-    event: "render_unit_quiz",
-    detail: {
-        unitID:element.unit_id
-    }
-  });
-  */
+
+  //console.log(element);
+  // SubPub.publish({
+  //   event: "render_unit_quiz",
+  //   detail: {
+  //       unitID:element.unit_id
+  //   }
+  // });
+
 
   const dom = document.querySelector("#modal .content");
   dom.classList.add(element.kind);

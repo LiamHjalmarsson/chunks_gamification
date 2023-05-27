@@ -110,7 +110,7 @@ function render( { element } ) {
                 counter++;
     
                 let textArea = page.querySelector("textarea");
-                
+
                 let quizQuestion = {
                     chapter_id: element.chapter_id,
                     question: textArea.value,
@@ -119,7 +119,7 @@ function render( { element } ) {
                     unit_id: element.unit_id,
                     spot: counter,
                 } 
-    
+
                 questionsQuizArray.push(quizQuestion);
             });
 

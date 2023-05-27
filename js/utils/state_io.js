@@ -63,13 +63,19 @@ export default {
     },
     {
       events: ["db::get::badges::received"],
-      middleware: () => { }
+      middleware: () => { 
+        //State.user.badges = response.badges;
+      }
     },
     {
       events: ["db::patch::streak::received"],
       middleware: (response, params) => {
         State.user.current_streak = response.current_streak[0].current_streak;
         State.user.high_Streak = response.high_Streak[0].high_Streak;
+
+        if(document.querySelector(".currentStreak")){
+          document.querySelector(".currentStreak").textContent = State.user.current_streak;
+        }
       }
     },
 

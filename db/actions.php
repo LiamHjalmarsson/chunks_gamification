@@ -238,13 +238,17 @@ function PATCH_badges($params, $pdo){
 
 function PATCH_streak($params, $pdo){
   $user_id = $params["user_id"];
-  $current_streak = $params["currentStreak"];
+  $current_streak = intval($params["currentStreak"]);
 
   $pdo -> query("UPDATE users SET current_streak = '$current_streak' WHERE user_id = $user_id");
 
-  $high_Streak = array_from_query($pdo, "SELECT high_Streak FROM users WHERE user_id = $user_id;");
+  $high_Streak = array_from_query($pdo, "SELECT high_Streak FROM users WHERE user_id = $user_id;")[0]["high_Streak"];
 
-  if($current_streak > $high_Streak || $high_Streak){
+  if($high_Streak == null){
+    $high_Streak = 0;
+  }
+
+  if($current_streak > $high_Streak){
     $pdo -> query("UPDATE users SET high_Streak = '$current_streak' WHERE user_id = $user_id");
   }
   
@@ -784,8 +788,6 @@ function POST_units_quizs_questions ($params, $pdo) {
     
     $pdo->query("INSERT INTO quiz_questions(unit_id, spot) VALUES($unit_id, $spot)");
     $quiz_question_id = $pdo->lastInsertId();
-    
-    $quiz_question_id = $question["quiz_question_id"];
     
     $field = "question";
 

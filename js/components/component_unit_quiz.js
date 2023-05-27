@@ -20,8 +20,6 @@ export default {}
 let counter = 0;
 
 function render(arg) {
-    //counter = state_io.state.users_units.find(u => u.unit_id == arg.unitID).questionsCounter;
-    
     counter = state_io.state.quiz_answers.filter(answer => answer.unit_id == arg.unitID).length;
 
     if(counter < 3){
@@ -54,8 +52,8 @@ function render(arg) {
   
       let streakP = document.createElement("p");
       streakP.classList.add("currentStreak");
-      streakP.innerHTML = state_io.state.user.current_streak;
-  
+      streakP.innerText = state_io.state.user.current_streak;
+
       let questionContainer = document.createElement("div");
       questionContainer.classList.add("questionContainer");
   
@@ -65,7 +63,7 @@ function render(arg) {
       optionsContainer.innerHTML = "";
       questionContainer.innerHTML = "";
   
-      renderNewQuestion(arg.unitID, optionsContainer, questionContainer, streakP);
+      renderNewQuestion(arg.unitID, optionsContainer, questionContainer);
   
       questionContainer.append(optionsContainer);
       headerContainer.append(closeQuizButton, unitName, streakP);
@@ -75,24 +73,18 @@ function render(arg) {
     }
 }
 
-function renderNewQuestion(unitID, optionsContainer, questionContainer, streakP) {
+function renderNewQuestion(unitID, optionsContainer, questionContainer) {
     counter++;
 
     optionsContainer.innerHTML = "";
     questionContainer.innerHTML = "";
-    
-    streakP.textContent = "";
-    streakP.textContent = state_io.state.user.current_streak;
-
-    console.log(streakP);
 
     let question = getRandomQuestion(unitID);
     questionContainer.innerHTML = counter + "/3 - " + question.question;
   
     let options = state_io.state.quiz_options.filter(option => option.quiz_question_id == question.quiz_question_id);
 
-    renderOptions(options,optionsContainer, questionContainer, unitID, streakP);
-
+    renderOptions(options,optionsContainer, questionContainer, unitID);
 }
 
 function getRandomQuestion(unitID) {
@@ -138,7 +130,7 @@ function getRandomQuestion(unitID) {
   }
 }
 
-function renderOptions(options, optionsContainer, questionContainer, unitID, streakP) {
+function renderOptions(options, optionsContainer, questionContainer, unitID) {
 
   for (let i = 0; i < options.length; i++) {
 
@@ -147,18 +139,16 @@ function renderOptions(options, optionsContainer, questionContainer, unitID, str
     let optionButton = document.createElement("div");
     optionButton.classList.add("quizOption");
     optionButton.innerText = option.option;
-    let currentStreak = parseInt(state_io.state.user.current_streak);
 
     optionButton.addEventListener("click", ()=>{
+        let currentStreak = state_io.state.user.current_streak;
 
-        if(option.correct){
-            currentStreak++;
-        }else{
-            currentStreak = 0;
+        if(currentStreak == null){
+          currentStreak = 0;
         }
 
         //Testa detta istället för en if-sats
-        //option.correct ? currentStreak++ : currentStreak = 0;
+        option.correct ? currentStreak++ : currentStreak = 0;
         
         SubPub.publish({
           event: "db::patch::streak::request",
@@ -171,7 +161,7 @@ function renderOptions(options, optionsContainer, questionContainer, unitID, str
         });
 
         if(counter < 3){
-          renderNewQuestion(unitID, optionsContainer, questionContainer, streakP);
+          renderNewQuestion(unitID, optionsContainer, questionContainer);
         }else{
           document.getElementById("closeQuizButton").click();
         }
