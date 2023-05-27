@@ -55,19 +55,12 @@ export default {
         State.quiz_questions = response.quiz_questions;
         State.quiz_options = response.quiz_options;
         State.quiz_answers = response.quiz_answers;
+        State.badges = response.badges;
       }
     },
     {
       events: ["db::get::date_time::received"],
       middleware: () => { }
-    },
-    {
-      events: ["db::get::badges::received"],
-      middleware: () => { }
-    },
-    {
-      events: ["db::get::userBadges::received"],
-      middleware: (response) => { State.user.badges = response.badges[0].badges }
     },
 
     // USERS
@@ -301,17 +294,15 @@ export default {
       }
     },
 
-    // BADGES
+    // BADGES & RANK
     {
-      events: "db::get::badges::received",
-      middleware: (response, params) => {
-        State.badges = response.badges;
-      }
+      events: "db::patch::userBadges::received",
+      middleware: (response) => { State.user.badges = response.badges[0].badges }
     },
     {
-      events: "db::patch::badges::received",
-      middleware: () => { }
-    }
+      events: ["db::patch::userRank::received"],
+      middleware: (response) => { State.user.rank = response.rank[0].rank }
+    },
   ];
 
   subscriptions.forEach(sb => {
