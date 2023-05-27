@@ -6,6 +6,23 @@ import { SubPub } from "../utils/subpub.js";
 export const ranking = { calculateRank, calculatePoints, calculateNextRank, patchBadges };
 ; (() => {
     SubPub.subscribe({
+        events: ["db::get::course::done", "db::post::ranking::done"],
+        listener: setUserRank
+    });
+
+    // SubPub.subscribe({
+    //     event: "db::post::ranking::done",
+    //     listener: () => {
+    //         console.log(state_io.state)
+    //         // SubPub.publish({
+    //         //     event: "db::get::rankings::request",
+    //         //     detail: { params: { course_id: state_io.state.course.course_id } }
+    //         // })
+    //     }
+    // });
+
+    /*
+    SubPub.subscribe({
         event: "db::patch::userBadges::done",
         listener: calculateRank
     });
@@ -24,12 +41,35 @@ export const ranking = { calculateRank, calculatePoints, calculateNextRank, patc
         //     // Give badge for latest rank
         // }
     })
+    */
 })();
 
 
+
+function setUserRank() {
+    let userRank;
+    state_io.state.rankings.forEach(user => {
+        if (user.userId == state_io.state.user.user_id) {
+            userRank = user.rank;
+        }
+    })
+    if (!userRank) {
+        SubPub.publish({
+            event: "db::post::ranking::request",
+            detail: { params: { user_id: state_io.state.user.user_id, rank: "Bronze", course: state_io.state.course.course_id } }
+        })
+    } else {
+        state_io.state.user.rank = userRank;
+        SubPub.publish({
+            event: "ranking_done",
+            detail: {}
+        })
+    }
+    console.log(state_io.state)
+}
+
 // Calculates current rank
 function calculateRank() {
-    console.log(state_io.state.user.rank)
     let rank;
     let badgenr;
     let totalPoints = calculatePoints()

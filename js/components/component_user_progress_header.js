@@ -2,33 +2,22 @@ import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
 import { ranking } from "../utils/component_ranking.js";
 
-export default {};
+export default render;
 
 ; (() => {
     SubPub.subscribe({
-        event: "db::get::course::done",
-        listener: () => {
-            if (!state_io.state.user.rank) {
-                SubPub.publish({
-                    event: "init_rank",
-                    details: {}
-                })
-            }
-            else {
-                render()
-            }
-        }
-    });
-
-    // When rank has been updated OR a badge had been added, render header again
-    SubPub.subscribe({
-        events: ["db::patch::userRank::done", "db::patch::userBadges::done"],
+        events: ["ranking_done", "db::patch::userBadges::done"],
         listener: render
     })
+
+    // // When rank has been updated OR a badge had been added, render header again
+    // SubPub.subscribe({
+    //     events: ["db::patch::userRank::done", "db::patch::userBadges::done"],
+    //     listener: render
+    // })
 })();
 
 function render() {
-    console.log(state_io.state)
     const progressHeader = document.getElementById("progress_header")
     progressHeader.innerHTML = "";
 
@@ -72,6 +61,7 @@ function fillProgressHeader() {
     // If at least one badge
     else {
         let userBadges = (state_io.state.user.badges.substring(1, state_io.state.user.badges.length - 1)).split(',').reverse();
+        console.log(userBadges)
         let recentBadge = userBadges.find(b => b.split('.')[0] == state_io.state.course.course_id).replace('.', '');
         console.log(state_io.state.badges)
         setTimeout(() => {
