@@ -3,48 +3,56 @@ import { SubPub } from "../utils/subpub.js";
 
 // TVUNGEN ATT FLYTTA OM COMPONENTRANKING TILL UTILS FÖR ATT EXPORT SULLE FUNGERA
 
+
+// ADD ON CLICK NEW COURSE CLOSE RANKINGS!!!!
+
 export const ranking = { calculateRank, calculatePoints, calculateNextRank, patchBadges };
 ; (() => {
     SubPub.subscribe({
-        events: ["db::get::course::done", "db::post::ranking::done"],
+        events: ["db::get::course::done", "db::patch::userRank::done"],
         listener: setUserRank
     });
 
-    // SubPub.subscribe({
-    //     event: "db::post::ranking::done",
-    //     listener: () => {
-    //         console.log(state_io.state)
-    //         // SubPub.publish({
-    //         //     event: "db::get::rankings::request",
-    //         //     detail: { params: { course_id: state_io.state.course.course_id } }
-    //         // })
-    //     }
-    // });
+    SubPub.subscribe({
+        event: "db::post::ranking::done",
+        listener: () => {
+            let userRank;
+            state_io.state.rankings.forEach(user => {
+                if (user.userId == state_io.state.user.user_id) {
+                    userRank = user.rank;
+                }
+            })
+            state_io.state.user.rank = userRank;
+            patchBadges(`${state_io.state.course.course_id}.1`)
+            // SubPub.publish({
+            //     event: "db::get::rankings::request",
+            //     detail: { params: { course_id: state_io.state.course.course_id } }
+            // })
+        }
+    });
 
-    /*
+
     SubPub.subscribe({
         event: "db::patch::userBadges::done",
         listener: calculateRank
     });
 
-    SubPub.subscribe({
-        event: "init_rank",
-        listener: calculateRank
+    // SubPub.subscribe({
+    //     event: "init_rank",
+    //     listener: calculateRank
 
-        // () => {
-        //     patchBadges(`${state_io.state.course.course_id}.${1}`)
-        //     // Patch rank in DB
-        //     SubPub.publish({
-        //         event: `db::patch::userRank::request`,
-        //         detail: { params: { user_id: state_io.state.user.user_id, rank: "Bronze" } }
-        //     });
-        //     // Give badge for latest rank
-        // }
-    })
-    */
+    //     // () => {
+    //     //     patchBadges(`${state_io.state.course.course_id}.${1}`)
+    //     //     // Patch rank in DB
+    //     //     SubPub.publish({
+    //     //         event: `db::patch::userRank::request`,
+    //     //         detail: { params: { user_id: state_io.state.user.user_id, rank: "Bronze" } }
+    //     //     });
+    //     //     // Give badge for latest rank
+    //     // }
+    // })
+
 })();
-
-
 
 function setUserRank() {
     let userRank;
@@ -54,6 +62,7 @@ function setUserRank() {
         }
     })
     if (!userRank) {
+
         SubPub.publish({
             event: "db::post::ranking::request",
             detail: { params: { user_id: state_io.state.user.user_id, rank: "Bronze", course: state_io.state.course.course_id } }
@@ -65,7 +74,6 @@ function setUserRank() {
             detail: {}
         })
     }
-    console.log(state_io.state)
 }
 
 // Calculates current rank
@@ -144,28 +152,22 @@ function calculateNextRank() {
     return nextRank;
 }
 
-// Gets last digit of number for use in percentage calculation
-function getLastDigit(number) {
-    let digit = number.toString();
-    let lastDigit = digit.charAt(digit.length - 1);
-    return parseInt(lastDigit);
-}
-
 // Calculates total points
 function calculatePoints() {
-
     // If no badges and no high streak
-    if (state_io.state.user.badges == "[]" && !state_io.state.user.high_Streak) {
+    if (state_io.state.user.badges == [] && !state_io.state.user.high_Streak) {
+        console.log("Calculated points: " + 0)
         return 0;
     }
 
     // If no badges but a high streak
-    if (state_io.state.user.badges !== "[]" && state_io.state.user.high_Streak) {
+    if (state_io.state.user.badges !== [] && state_io.state.user.high_Streak) {
+        console.log(parseInt(state_io.state.user.high_Streak))
         return parseInt(state_io.state.user.high_Streak)
     }
 
     // If badges but no high streak
-    if (state_io.state.user.badges !== "[]" && !state_io.state.user.high_Streak) {
+    if (state_io.state.user.badges !== [] && !state_io.state.user.high_Streak) {
         let badges = [];
         let userBadges = state_io.state.user.badges;
         // Remove first and last character [] and split on ,
@@ -176,10 +178,11 @@ function calculatePoints() {
                 badges.push(badge);
         });
         let totalPoints = parseInt(badges.length);
+        console.log(totalPoints)
         return totalPoints;
     }
 
-    if (state_io.state.user.badges !== "[]" && state_io.state.user.high_Streak) {
+    if (state_io.state.user.badges !== [] && state_io.state.user.high_Streak) {
         let badges = [];
         let userBadges = state_io.state.user.badges;
         // Remove first and last character [] and split on ,
@@ -190,8 +193,16 @@ function calculatePoints() {
                 badges.push(badge);
         });
         let totalPoints = parseInt(badges.length) + parseInt(state_io.state.user.high_Streak);
+        console.log(totalPoints)
         return totalPoints;
     }
+}
+
+// Gets last digit of number for use in percentage calculation
+function getLastDigit(number) {
+    let digit = number.toString();
+    let lastDigit = digit.charAt(digit.length - 1);
+    return parseInt(lastDigit);
 }
 
 // Add new badge to user
@@ -213,4 +224,4 @@ function patchBadges(newBadge) {
     });
 }
 
-//setTimeout(() => { patchBadges(3.4) }, 3000)
+//setTimeout(() => { patchBadges(2.6) }, 3000)

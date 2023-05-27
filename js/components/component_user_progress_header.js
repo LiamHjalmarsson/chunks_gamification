@@ -53,7 +53,7 @@ function fillProgressHeader() {
     }
 
     // If no badges yet
-    if (state_io.state.user.badges == "[]") {
+    if (state_io.state.user.badges == []) {
         document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: No badges yet...";
         document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "none";
     }
@@ -61,14 +61,18 @@ function fillProgressHeader() {
     // If at least one badge
     else {
         let userBadges = (state_io.state.user.badges.substring(1, state_io.state.user.badges.length - 1)).split(',').reverse();
-        console.log(userBadges)
-        let recentBadge = userBadges.find(b => b.split('.')[0] == state_io.state.course.course_id).replace('.', '');
-        console.log(state_io.state.badges)
-        setTimeout(() => {
-            let badgeImg = (state_io.state.badges.find(badge => badge.badge_id == recentBadge)).img;
-            document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: ";
-            document.querySelector("#progress_header_recentbadge div").style.backgroundImage = `url(media/badges/${badgeImg}.png)`;
-        }, 10)
+        let courseBadges = userBadges.filter(b => b.split('.')[0] == state_io.state.course.course_id);
+        if (courseBadges == "") {
+            document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: No badges yet...";
+            document.querySelector("#progress_header_recentbadge div").style.backgroundImage = "none";
+        } else {
+            let recentBadge = userBadges.find(b => b.split('.')[0] == state_io.state.course.course_id).replace('.', '');
+            setTimeout(() => {
+                let badgeImg = (state_io.state.badges.find(badge => badge.badge_id == recentBadge)).img;
+                document.querySelector("#progress_header_recentbadge p").innerHTML = "Recent badge: ";
+                document.querySelector("#progress_header_recentbadge div").style.backgroundImage = `url(media/badges/${badgeImg}.png)`;
+            }, 10)
+        }
     }
 
     // Rank

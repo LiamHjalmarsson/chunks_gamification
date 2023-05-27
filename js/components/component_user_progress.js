@@ -67,17 +67,16 @@ function fillProgressRanking() {
 // RENDER ALL BADGES
 function renderBadges() {
     let userBadges = state_io.state.user.badges;
+    userBadges = userBadges.substring(1, userBadges.length - 1);
+    userBadges = userBadges.split(',')
+    let courseBadges = userBadges.filter(b => b.split('.')[0] == state_io.state.course.course_id);
 
     // If no badges yet
-    if (userBadges == "[]") {
+    if (userBadges == [] || courseBadges == "") {
         document.getElementById("progress_badges").innerHTML = "<div>Inga badges ännu!</div>"
     }
-
     // If at least one badge
     else {
-        // Remove first and last character [] and split on ,
-        userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
-
         // Checking if the badge belongs to the current course
         userBadges.forEach(badge => {
             if (badge.split('.')[0] == state_io.state.course.course_id)
