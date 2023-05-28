@@ -56,6 +56,7 @@ export default {
         State.quiz_options = response.quiz_options;
         State.quiz_answers = response.quiz_answers;
         State.badges = response.badges;
+        State.rankings = response.rankings;
       }
     },
     {
@@ -300,9 +301,20 @@ export default {
       middleware: (response) => { State.user.badges = response.badges[0].badges }
     },
     {
-      events: ["db::patch::userRank::received"],
-      middleware: (response) => { State.user.rank = response.rank[0].rank }
+      events: ["db::patch::ranking::received"],
+      middleware: (response) => { State.rankings = response.rankings }
     },
+    {
+      events: ["db::get::rankings::received"],
+      middleware: (response) => { State.rankings = response.rankings }
+    },
+    {
+      events: ["db::post::ranking::received"],
+      middleware: (response) => {
+        console.log(response)
+        State.rankings = response.rankings
+      }
+    }
   ];
 
   subscriptions.forEach(sb => {

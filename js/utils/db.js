@@ -86,8 +86,11 @@ export default {}
 
       // BADGES
       "db::patch::userBadges::request",
-      "db::patch::userRank::request"
 
+      // RANK
+      "db::get::rankings::request",
+      "db::post::ranking::request",
+      "db::patch::ranking::request"
     ];
 
     events.forEach(event => {
