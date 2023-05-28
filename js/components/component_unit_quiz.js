@@ -20,6 +20,7 @@ export default {}
 let counter = 0;
 
 function render(arg) {
+
     counter = state_io.state.quiz_answers.filter(answer => answer.unit_id == arg.unitID).length;
 
     if(counter < 3){
@@ -168,6 +169,16 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
         if(counter < 3){
           renderNewQuestion(unitID, optionsContainer, questionContainer);
         }else{
+          document.querySelector(".button_close").click();
+
+          let element = state_io.state.units.find(unit => unit.unit_id === unitID);
+          console.log(element);
+          setTimeout(() => {
+            SubPub.publish({
+              event: "render::modal::unit",
+              detail: { element }
+            })
+          }, 500);
           document.getElementById("closeQuizButton").click();
         }
     })
