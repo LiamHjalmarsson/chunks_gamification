@@ -85,7 +85,7 @@ function renderNewQuestion(unitID, optionsContainer, questionContainer) {
     questionContainer.innerHTML = "";
 
     let question = getRandomQuestion(unitID);
-    questionContainer.innerHTML = counter + "/3 - " + question.question;
+    questionContainer.innerHTML = counter + "/3 - "+ question.owner + ": " + question.question;
   
     let options = state_io.state.quiz_options.filter(option => option.quiz_question_id == question.quiz_question_id);
 

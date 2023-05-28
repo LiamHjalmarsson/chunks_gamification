@@ -73,7 +73,7 @@ function render( { element } ) {
     });
 
     console.log(state_io.state);
-
+    
     function update () {
           
         let lastQuestionId = parseInt(state_io.state.quiz_questions[state_io.state.quiz_questions.length - 1].quiz_question_id);
@@ -118,6 +118,7 @@ function render( { element } ) {
                     section_id: element.section_id,
                     unit_id: element.unit_id,
                     spot: counter,
+                    owner: state_io.state.user.name
                 } 
 
                 questionsQuizArray.push(quizQuestion);
