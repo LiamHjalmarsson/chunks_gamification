@@ -40,7 +40,6 @@ export const ranking = { calculateRank, calculatePoints, calculateNextRank, patc
 })();
 
 function setUserRank() {
-    console.log(state_io.state.user.rank)
     let userRank;
     state_io.state.rankings.forEach(user => {
         if (user.userId == state_io.state.user.user_id) {
@@ -94,7 +93,6 @@ function calculateRank() {
             break;
     }
     if (rank !== state_io.state.user.rank) {
-        console.log(rank)
         state_io.state.user.rank = rank;
         // Patch rank in DB
         SubPub.publish({
@@ -144,9 +142,6 @@ function calculateNextRank() {
 
 // Calculates total points
 function calculatePoints() {
-    console.log(state_io.state.user.badges)
-    console.log(state_io.state.user.high_Streak)
-    console.log((state_io.state.user.badges !== []))
     // If no badges and no high streak
     if (state_io.state.user.badges == [] && !state_io.state.user.high_Streak) {
         return 0;
@@ -169,7 +164,6 @@ function calculatePoints() {
                 badges.push(badge);
         });
         let totalPoints = parseInt(badges.length);
-        console.log(totalPoints)
         return totalPoints;
     }
 
@@ -185,7 +179,6 @@ function calculatePoints() {
                 badges.push(badge);
         });
         let totalPoints = parseInt(badges.length) + parseInt(state_io.state.user.high_Streak);
-        console.log(totalPoints)
         return totalPoints;
     }
 }
@@ -209,7 +202,6 @@ function patchBadges(newBadge) {
         userBadges = userBadges.slice(0, -1);
         userBadges = userBadges + "," + newBadge + "]";
     }
-    console.log(userBadges)
     SubPub.publish({
         event: `db::patch::userBadges::request`,
         detail: { params: { user_id: state_io.state.user.user_id, badges: userBadges } }
