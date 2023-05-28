@@ -9,7 +9,18 @@ import { SubPub } from "../utils/subpub.js";
 export const ranking = { calculateRank, calculatePoints, calculateNextRank, patchBadges };
 ; (() => {
     SubPub.subscribe({
-        events: ["db::get::course::done", "db::patch::userRank::done"],
+        event: "db::get::course::done",
+        listener: () => {
+            const progressDiv = document.getElementById("content_user_progress");
+            progressDiv.style.padding = '0'
+            progressDiv.style.height = '0';
+            progressDiv.style.opacity = '0';
+            setUserRank()
+        }
+    });
+
+    SubPub.subscribe({
+        event: "db::patch::userRank::done",
         listener: setUserRank
     });
 
@@ -24,34 +35,13 @@ export const ranking = { calculateRank, calculatePoints, calculateNextRank, patc
             })
             state_io.state.user.rank = userRank;
             patchBadges(`${state_io.state.course.course_id}.1`)
-            // SubPub.publish({
-            //     event: "db::get::rankings::request",
-            //     detail: { params: { course_id: state_io.state.course.course_id } }
-            // })
         }
     });
-
 
     SubPub.subscribe({
         event: "db::patch::userBadges::done",
         listener: calculateRank
     });
-
-    // SubPub.subscribe({
-    //     event: "init_rank",
-    //     listener: calculateRank
-
-    //     // () => {
-    //     //     patchBadges(`${state_io.state.course.course_id}.${1}`)
-    //     //     // Patch rank in DB
-    //     //     SubPub.publish({
-    //     //         event: `db::patch::userRank::request`,
-    //     //         detail: { params: { user_id: state_io.state.user.user_id, rank: "Bronze" } }
-    //     //     });
-    //     //     // Give badge for latest rank
-    //     // }
-    // })
-
 })();
 
 function setUserRank() {
@@ -62,10 +52,9 @@ function setUserRank() {
         }
     })
     if (!userRank) {
-
         SubPub.publish({
             event: "db::post::ranking::request",
-            detail: { params: { user_id: state_io.state.user.user_id, rank: "Bronze", course: state_io.state.course.course_id } }
+            detail: { params: { user_id: state_io.state.user.user_id, user_name: state_io.state.user_name, rank: "Bronze", course: state_io.state.course.course_id } }
         })
     } else {
         state_io.state.user.rank = userRank;
@@ -162,7 +151,6 @@ function calculatePoints() {
 
     // If no badges but a high streak
     if (state_io.state.user.badges !== [] && state_io.state.user.high_Streak) {
-        console.log(parseInt(state_io.state.user.high_Streak))
         return parseInt(state_io.state.user.high_Streak)
     }
 

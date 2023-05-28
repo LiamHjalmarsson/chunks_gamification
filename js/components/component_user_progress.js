@@ -77,6 +77,7 @@ function renderBadges() {
     }
     // If at least one badge
     else {
+
         // Checking if the badge belongs to the current course
         userBadges.forEach(badge => {
             if (badge.split('.')[0] == state_io.state.course.course_id)
