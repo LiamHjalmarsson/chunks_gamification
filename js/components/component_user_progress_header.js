@@ -9,12 +9,6 @@ export default render;
         events: ["ranking_done", "db::patch::userBadges::done"],
         listener: render
     })
-
-    // // When rank has been updated OR a badge had been added, render header again
-    // SubPub.subscribe({
-    //     events: ["db::patch::userRank::done", "db::patch::userBadges::done"],
-    //     listener: render
-    // })
 })();
 
 function render() {

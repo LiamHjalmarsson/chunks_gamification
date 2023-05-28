@@ -20,11 +20,6 @@ export const ranking = { calculateRank, calculatePoints, calculateNextRank, patc
     });
 
     SubPub.subscribe({
-        event: "db::patch::userRank::done",
-        listener: setUserRank
-    });
-
-    SubPub.subscribe({
         event: "db::post::ranking::done",
         listener: () => {
             let userRank;
@@ -45,18 +40,22 @@ export const ranking = { calculateRank, calculatePoints, calculateNextRank, patc
 })();
 
 function setUserRank() {
+    console.log(state_io.state.user.rank)
     let userRank;
     state_io.state.rankings.forEach(user => {
         if (user.userId == state_io.state.user.user_id) {
             userRank = user.rank;
         }
     })
+    // If the user has no current rank, initialize Bronze
     if (!userRank) {
         SubPub.publish({
             event: "db::post::ranking::request",
-            detail: { params: { user_id: state_io.state.user.user_id, user_name: state_io.state.user_name, rank: "Bronze", course: state_io.state.course.course_id } }
+            detail: { params: { user_id: state_io.state.user.user_id, user_name: state_io.state.user.name, rank: "Bronze", course: state_io.state.course.course_id } }
         })
-    } else {
+    }
+    // If the user DOES have a rank, add to state and publish done event
+    else {
         state_io.state.user.rank = userRank;
         SubPub.publish({
             event: "ranking_done",
@@ -95,10 +94,12 @@ function calculateRank() {
             break;
     }
     if (rank !== state_io.state.user.rank) {
+        console.log(rank)
+        state_io.state.user.rank = rank;
         // Patch rank in DB
         SubPub.publish({
-            event: `db::patch::userRank::request`,
-            detail: { params: { user_id: state_io.state.user.user_id, rank: rank } }
+            event: `db::patch::ranking::request`,
+            detail: { params: { user_id: state_io.state.user.user_id, rank: rank, course: state_io.state.course.course_id } }
         });
         // Give badge for latest rank
         patchBadges(`${state_io.state.course.course_id}.${badgenr}`)
@@ -143,14 +144,16 @@ function calculateNextRank() {
 
 // Calculates total points
 function calculatePoints() {
+    console.log(state_io.state.user.badges)
+    console.log(state_io.state.user.high_Streak)
+    console.log((state_io.state.user.badges !== []))
     // If no badges and no high streak
     if (state_io.state.user.badges == [] && !state_io.state.user.high_Streak) {
-        console.log("Calculated points: " + 0)
         return 0;
     }
 
     // If no badges but a high streak
-    if (state_io.state.user.badges !== [] && state_io.state.user.high_Streak) {
+    if (state_io.state.user.badges == [] && state_io.state.user.high_Streak) {
         return parseInt(state_io.state.user.high_Streak)
     }
 
@@ -170,6 +173,7 @@ function calculatePoints() {
         return totalPoints;
     }
 
+    // If both badges and high streak avaliable
     if (state_io.state.user.badges !== [] && state_io.state.user.high_Streak) {
         let badges = [];
         let userBadges = state_io.state.user.badges;

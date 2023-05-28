@@ -13,6 +13,7 @@ export default {};
 })();
 
 function render() {
+    console.log(state_io.state)
     const progressDiv = document.getElementById("content_user_progress");
     progressDiv.innerHTML = "";
     progressDiv.style.padding = '15px';

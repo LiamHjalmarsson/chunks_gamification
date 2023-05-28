@@ -260,10 +260,11 @@ function GET_rankings($params, $pdo){
 function POST_ranking($params, $pdo){
   $course = $params["course"];
   $user_id = $params["user_id"];
+  $user_name = $params["user_name"];
   $rank = $params["rank"];
 
   $pdo -> query("UPDATE users SET badges = '$badges' WHERE user_id = $user_id");
-  $pdo->query("INSERT INTO rankings(userId, course, rank) VALUES('$user_id', '$course', '$rank')");
+  $pdo->query("INSERT INTO rankings(userId, userName, course, rank) VALUES('$user_id', '$user_name', '$course', '$rank')");
   $pdo->query($sql);
 
   return [
@@ -277,12 +278,13 @@ function POST_ranking($params, $pdo){
 function PATCH_ranking($params, $pdo){
     $user_id = $params["user_id"];
     $rank = $params["rank"];
+    $course = $params["course"];
 
-    $pdo -> query("UPDATE rankings SET rank = '$rank' WHERE user_id = $user_id");
+    $pdo -> query("UPDATE rankings SET rank = '$rank' WHERE userId = '$user_id' AND course = '$course'");
 
     return [
       "data" => [
-        "rank" => array_from_query($pdo, "SELECT * FROM rankings WHERE user_id = $user_id;")
+        "rankings" => array_from_query($pdo, "SELECT * FROM rankings WHERE course = '$course'")
       ]
     ];
 }

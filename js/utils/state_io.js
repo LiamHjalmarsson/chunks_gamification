@@ -301,8 +301,8 @@ export default {
       middleware: (response) => { State.user.badges = response.badges[0].badges }
     },
     {
-      events: ["db::patch::userRank::received"],
-      middleware: (response) => { State.user.rank = response.rank[0].rank }
+      events: ["db::patch::ranking::received"],
+      middleware: (response) => { State.rankings = response.rankings }
     },
     {
       events: ["db::get::rankings::received"],
