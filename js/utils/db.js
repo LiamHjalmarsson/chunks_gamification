@@ -42,7 +42,8 @@ export default {}
       "db::patch::user::request",
       "db::post::user::request",
       "db::post::units_quizs_questions::request",
-
+      "db::patch::streak::request",
+  
       // USERS_UNITS
       "db::patch::users_units::request",
       "db::patch::users_units_questionsAnswered::request",

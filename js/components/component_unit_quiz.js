@@ -20,8 +20,7 @@ export default {}
 let counter = 0;
 
 function render(arg) {
-    //counter = state_io.state.users_units.find(u => u.unit_id == arg.unitID).questionsCounter;
-    
+
     counter = state_io.state.quiz_answers.filter(answer => answer.unit_id == arg.unitID).length;
 
     if(counter < 3){
@@ -52,10 +51,15 @@ function render(arg) {
       unitName.classList.add("unitName");
       unitName.innerText = state_io.state.units.find(u => u.unit_id = arg.unitID).name;
   
-      let currentStreak = document.createElement("p");
-      currentStreak.classList.add("currentStreak");
-      currentStreak.innerText = state_io.state.user.currentStreak;
-  
+      let streakP = document.createElement("p");
+      streakP.classList.add("currentStreak");
+      
+      if(state_io.state.user.current_streak == null){
+        streakP.innerText = 0;
+      }else{
+        streakP.innerText = state_io.state.user.current_streak;
+      }
+
       let questionContainer = document.createElement("div");
       questionContainer.classList.add("questionContainer");
   
@@ -68,7 +72,7 @@ function render(arg) {
       renderNewQuestion(arg.unitID, optionsContainer, questionContainer);
   
       questionContainer.append(optionsContainer);
-      headerContainer.append(closeQuizButton, unitName, currentStreak);
+      headerContainer.append(closeQuizButton, unitName, streakP);
       quizContainer.append(headerContainer, questionContainer);
   
       document.getElementById("modal").append(quizContainer);
@@ -82,12 +86,11 @@ function renderNewQuestion(unitID, optionsContainer, questionContainer) {
     questionContainer.innerHTML = "";
 
     let question = getRandomQuestion(unitID);
-    questionContainer.innerHTML = counter + "/3 - " + question.question;
+    questionContainer.innerHTML = counter + "/3 - "+ question.owner + ": " + question.question;
   
     let options = state_io.state.quiz_options.filter(option => option.quiz_question_id == question.quiz_question_id);
 
     renderOptions(options,optionsContainer, questionContainer, unitID);
-
 }
 
 function getRandomQuestion(unitID) {
@@ -144,32 +147,17 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
     optionButton.innerText = option.option;
 
     optionButton.addEventListener("click", ()=>{
-        let currentStreak = parseInt(state_io.state.user.currentStreak);
-        
-        if(option.correct){
-            currentStreak++;
-            //Detta kan göras i api.php eller actions.php för att undvika (minska) fler förfrågningar till databasen
-            /*
-            //Om current streak är större, vilket blir ny rekord för användaren
-            //Uppdatera databasen
-            if(currentStreak > state_io.state.user.highStreak){
-                SubPub.publish({
-                    event: "db::update::user_highstreak::request",
-                    detail: { params: { currentStreak }}
-                });
-            }
-            */
-        }else{
-            currentStreak = 0;
+        let currentStreak = state_io.state.user.current_streak;
+
+        if(currentStreak == null){
+          currentStreak = 0;
         }
 
         //Testa detta istället för en if-sats
-        //option.correct ? currentStreak++ : currentStreak = 0;
+        option.correct ? currentStreak++ : currentStreak = 0;
         
-        document.getElementsByClassName("currentStreak").innerText = currentStreak;
-
         SubPub.publish({
-          event: "db::update::user_currentStreak::request",
+          event: "db::patch::streak::request",
           detail: { params: { currentStreak, user_id:state_io.state.user.user_id }}
         });
 
@@ -181,6 +169,16 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
         if(counter < 3){
           renderNewQuestion(unitID, optionsContainer, questionContainer);
         }else{
+          document.querySelector(".button_close").click();
+
+          let element = state_io.state.units.find(unit => unit.unit_id === unitID);
+          console.log(element);
+          setTimeout(() => {
+            SubPub.publish({
+              event: "render::modal::unit",
+              detail: { element }
+            })
+          }, 500);
           document.getElementById("closeQuizButton").click();
         }
     })

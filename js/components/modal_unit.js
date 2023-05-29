@@ -64,9 +64,13 @@ export default { render }
 
   SubPub.subscribe({
     event: "db::post::units_quizs_questions::done",
-    listener: ((unitId) => {
-      let element = state_io.state.units.find(u => u.unit_id === unitId);
-      render(element); 
+    listener: (({response, params}) => {
+      let element = state_io.state.units.find(u => u.unit_id === response.unitId);
+
+      document.querySelector("#editor").classList.add("hidden");
+      document.querySelector(".content").classList.add("hidden");
+      document.querySelector("#editor > .content").innerHTML = "";
+      render({element});
     })
   });
 
@@ -80,18 +84,6 @@ function close_modal () {
 }
 
 function render ({ element }) {
-  
-  //sparar unit_id till localstorage
-  //localStorage.setItem("currentUnitID", element.unit_id);
-
-  console.log(element);
-  // SubPub.publish({
-  //   event: "render_unit_quiz",
-  //   detail: {
-  //       unitID:element.unit_id
-  //       // unitID:"666"
-  //   }
-  // });
 
   const dom = document.querySelector("#modal .content");
   dom.classList.add(element.kind);
@@ -283,6 +275,16 @@ function render_checks ({ element, container_dom }) {
     </div>
   `;
 
+  console.log("Hej");
+  let questionsUserCreated = state_io.state.quiz_questions.filter(question => question.owner === state_io.state.user.name && question.unit_id === element.unit_id);
+  let questionsUserAnswerd = state_io.state.quiz_answers.filter(answer => answer.unit_id === element.unit_id);
+  console.log(questionsUserAnswerd);
+
+  if (questionsUserAnswerd.length >= 3) {
+    document.querySelector(`#check_box_quiz_${element.unit_id}`).disabled = true;
+    document.querySelector(`#check_box_quiz_${element.unit_id}`).checked = true;
+  }
+
   // CHECK ACTIONS
   is_ready && container_dom.querySelectorAll(".check_holder").forEach(x => x.addEventListener("change", patch_users_unit));
 
@@ -305,6 +307,20 @@ function render_checks ({ element, container_dom }) {
         video: "Jag har sätt videon och redo att skapa quiz frågor",
       }
     };
+
+    let questionsUserCreated = state_io.state.quiz_questions.filter(question => question.owner === state_io.state.user.name && question.unit_id === element.unit_id);
+    let questionsUserAnswerd = state_io.state.quiz_answers.filter(answer => answer.unit_id === element.unit_id);
+
+    if (questionsUserCreated.length > 2) { 
+      if (questionsUserAnswerd.length === 0) {
+        checks.quiz.video = "Start Quiz";
+      } else if (questionsUserAnswerd.length > 2) {
+        checks.quiz.video = "Färdig med Quiz";
+      }
+      else {
+        checks.quiz.video = "Fortsätt Quiz";
+      }
+    } 
 
     const id = `check_box_${which}_${element.unit_id}`;
     const checked = (users_unit && users_unit[`check_${which}`]) ? "checked": "";
@@ -437,7 +453,6 @@ function update_saver_timer (feedback) {
   feedback_save_dom.querySelector(".feedback").innerHTML = feedback || `Saving in ${feedback_save_dom.dataset.seconds_left} seconds`;
 }
 function patch_users_unit (event) {
-
   // Stop potential timer
   const feedback_save_dom = document.querySelector("#modal .content .notes .feedback_save");
   if (feedback_save_dom.dataset.timer_id !== -1) {
@@ -450,10 +465,26 @@ function patch_users_unit (event) {
   const { field_name, element } = JSON.parse(event.target.dataset.update_data);
   
   if ( field_name === "check_quiz" ) {
-    SubPub.publish({
-      event: "render_user_addQuiz",
-      detail: { element: state_io.state.units.find(u => u.unit_id === element.unit_id) } // User may have edited element and it has been updated in State
-    });
+    let questionsUserCreated = state_io.state.quiz_questions.filter(question => question.owner === state_io.state.user.name && question.unit_id === element.unit_id);
+    let questionsUserAnswerd = state_io.state.quiz_answers.filter(answer => answer.unit_id === element.unit_id);
+
+    if (questionsUserCreated.length >= 3) { 
+
+      if (questionsUserAnswerd.length < 3) {
+        SubPub.publish({
+          event: "render_unit_quiz",
+          detail: {
+              unitID:element.unit_id
+          }
+        });
+      }
+
+    } else {
+      SubPub.publish({
+        event: "render_user_addQuiz",
+        detail: { element: state_io.state.units.find(u => u.unit_id === element.unit_id) } 
+      });
+    }
 
   } else {
     SubPub.publish({

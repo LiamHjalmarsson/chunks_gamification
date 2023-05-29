@@ -73,23 +73,69 @@ function render( { element } ) {
     });
 
     console.log(state_io.state);
+
+    function calcRanking(userID) {
+        let badges = state_io.state.user.badges;
+        let highStreak = state_io.state.user.high_Streak;
+
+        let allChapters = state_io.state.chapters;
+        let allSections = state_io.state.sections;
+        let allUnits = state_io.state.units;
+        let users_units = state_io.state.users_units;
+
+        let chaptersCompleted = [];
+        let sectionsCompleted = [];
+
+        //Loops to check sections completed
+        allSections.forEach(section => {
+            let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
+            let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id && un.check_complete == true);
+
+            if(sectionsUnits.length == sectionsUnitsCompleted.length){
+                sectionsCompleted.push(section);
+            }
+
+        })
+
+        allChapters.forEach(chapter => {
+
+            let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
+            let chaptersSectionsCompleted = [];
+
+            chaptersSections.forEach(section => {
+                if(sectionsCompleted.includes(section)){
+                    chaptersSectionsCompleted.push(section);
+                }
+            });
+
+            if(chaptersSections.length == chaptersSectionsCompleted.length){
+                chaptersCompleted.push(chapter);
+            }
+        });
+
+    }
+
+    calcRanking();
+
     function update () {
-        let nextQustionId = parseInt(state_io.state.quiz_questions[state_io.state.quiz_questions.length - 1].quiz_question_id);
+          
+        let lastQuestionId = parseInt(state_io.state.quiz_questions[state_io.state.quiz_questions.length - 1].quiz_question_id);
         let lastOptionId = parseInt(state_io.state.quiz_options[state_io.state.quiz_options.length - 1].quiz_option_id);
         let counter = 0; 
-
-        let questionsQuizArray = [];
-        let questionsOptionsArray = [];
 
         let studentQuizPages = document.querySelectorAll(".studentQuizPage"); 
 
         let checkAllPages = Array.from(studentQuizPages).every(page => page.querySelector("textarea").value !== "");
 
+        let questionsQuizArray = [];
+        let questionsOptionsArray = [];
+
         let optionSelected = []; 
         let optionCheckedValues; 
+        let checkOption;
 
         Array.from(studentQuizPages).forEach(option => {
-            let checkOption = option.querySelectorAll(".optionsQuizStudent > div"); 
+            checkOption = option.querySelectorAll(".optionsQuizStudent > div"); 
 
             optionCheckedValues = Array.from(checkOption).every(option => option.querySelector("textarea").value !== "");
 
@@ -100,92 +146,75 @@ function render( { element } ) {
 
         if (checkAllPages && optionCheckedValues && everyQuestionHasCheckedOption) { 
 
+            checkOption = document.querySelectorAll(".optionsQuizStudent > div"); 
+
             studentQuizPages.forEach(page => {
-                nextQustionId++; 
+                lastQuestionId++; 
                 counter++;
     
                 let textArea = page.querySelector("textarea");
-                let checkOption = page.querySelectorAll(".optionsQuizStudent > div"); 
-                
+
                 let quizQuestion = {
                     chapter_id: element.chapter_id,
                     question: textArea.value,
-                    quiz_question_id: nextQustionId.toString(),
+                    quiz_question_id: lastQuestionId.toString(),
                     section_id: element.section_id,
                     unit_id: element.unit_id,
-                    spot: counter
+                    spot: counter,
+                    owner: state_io.state.user.name
                 } 
-    
 
                 questionsQuizArray.push(quizQuestion);
-                // SubPub.publish({
-                //     event: "db::post::quiz_question::request",
-                //     detail: { params: { unit: quizQuestion } }
-                // }); 
+            });
+
+            for (let i = 0; i < checkOption.length; i++) {
+                const option = checkOption[i];
 
                 let optionsQuiz = {
                     chapter_id: element.chapter_id,
                     correct: false,
                     quiz_option_id: 0,
-                    quiz_question_id: nextQustionId.toString(),
+                    quiz_question_id: 0,
                     section_id: element.section_id,
                     unit_id: element.unit_id,
                     option: "",
                 } 
 
+                lastOptionId++; 
 
-                // checkOption.forEach(option => {
-                //     SubPub.publish({
-                //         event: "db::post::quiz_option::request",
-                //         detail: { params: { question: quizQuestion } }
-                //     });
-                // });
+                if(i <= 3){
+                    optionsQuiz.quiz_question_id = questionsQuizArray[0].quiz_question_id;
+                }else if(i > 3 && i < 8){
+                    optionsQuiz.quiz_question_id = questionsQuizArray[1].quiz_question_id;
+                }else{
+                    optionsQuiz.quiz_question_id = questionsQuizArray[2].quiz_question_id;
+                }
 
-                // setTimeout(() => {
-                    checkOption.forEach(option => {
-                        lastOptionId++; 
-                        optionsQuiz.quiz_option_id = lastOptionId.toString();
-        
-                        optionsQuiz.option = option.childNodes[3].firstElementChild.value; 
-        
-                        if (option.childNodes[1].firstElementChild.checked) {
-                            optionsQuiz.correct = true;
-                        } else {
-                            optionsQuiz.correct = false;
-                        }
+                optionsQuiz.quiz_option_id = lastOptionId.toString();
+    
+                optionsQuiz.option = option.childNodes[3].firstElementChild.value; 
+    
+                if (option.childNodes[1].firstElementChild.checked) {
+                    optionsQuiz.correct = true;
+                } else {
+                    optionsQuiz.correct = false;
+                }
 
-                        
-                        questionsOptionsArray.push(optionsQuiz);
-                        // SubPub.publish({
-                        //     event: "db::patch::quiz_option::request",
-                        //     detail: { params: { option: optionsQuiz } }
-                        // });
-
-        
-                        // SubPub.publish({
-                        //     event: "db::patch::quiz_option::request",
-                        //     detail: { params: { option: optionsQuiz } }
-                        // });
-
-        
-                    });
-                // }, 2000);
-            });
-
-
+                questionsOptionsArray.push(optionsQuiz);
+            }
+            
             SubPub.publish({
                 event: "db::post::units_quizs_questions::request",
                 detail: { params: { 
                     questions: questionsQuizArray,
-                    options: questionsOptionsArray
+                    options: questionsOptionsArray,
+                    course_id:element.course_id
                     }
                 }
             });
 
         } else {
-            
             console.log("not question enterd");
-
         }
     }
 }

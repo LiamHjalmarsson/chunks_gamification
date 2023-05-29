@@ -325,6 +325,30 @@ function PATCH_ranking($params, $pdo){
 
 // STREAK 
 
+function PATCH_streak($params, $pdo){
+  $user_id = $params["user_id"];
+  $current_streak = intval($params["currentStreak"]);
+
+  $pdo -> query("UPDATE users SET current_streak = '$current_streak' WHERE user_id = $user_id");
+
+  $high_Streak = array_from_query($pdo, "SELECT high_Streak FROM users WHERE user_id = $user_id;")[0]["high_Streak"];
+
+  if($high_Streak == null){
+    $high_Streak = 0;
+  }
+
+  if($current_streak > $high_Streak){
+    $pdo -> query("UPDATE users SET high_Streak = '$current_streak' WHERE user_id = $user_id");
+  }
+  
+  return [
+    "data" => [
+      "current_streak" => array_from_query($pdo, "SELECT current_streak FROM users WHERE user_id = $user_id;"),
+      "high_Streak" => array_from_query($pdo, "SELECT high_Streak FROM users WHERE user_id = $user_id;")
+    ]
+  ];
+}
+
 
 // SPOT UPDATER
 function update_spot ($pdo, $parent_id, $new_spot, $old_spot, $kind, $kind_parent) {
@@ -843,6 +867,7 @@ function POST_quiz_option ($params, $pdo) {
 function POST_units_quizs_questions ($params, $pdo) {
   $questions = $params["questions"];
   $options = $params["options"];
+  $course_id = $params["course_id"];
   
   foreach($questions as $question) { 
     $unit_id = $question["unit_id"];
@@ -853,31 +878,42 @@ function POST_units_quizs_questions ($params, $pdo) {
     $pdo->query("INSERT INTO quiz_questions(unit_id, spot) VALUES($unit_id, $spot)");
     $quiz_question_id = $pdo->lastInsertId();
     
-    $quiz_question_id = $question["quiz_question_id"];
-    
     $field = "question";
-
     $value = $question["question"];
     $pdo -> query ("UPDATE quiz_questions SET $field = '$value' WHERE quiz_question_id = $quiz_question_id");
+
+    $fieldOwner = "owner";
+    $valueOwner = $question["owner"];
+    $pdo -> query ("UPDATE quiz_questions SET $fieldOwner = '$valueOwner' WHERE quiz_question_id = $quiz_question_id");
+
 
     foreach($options as $option) {
       if ($option["quiz_question_id"] === $question["quiz_question_id"]) {
         $pdo->query("INSERT INTO quiz_options(quiz_question_id) VALUES($quiz_question_id)");
         $quiz_option_id = $pdo->lastInsertId();
-        $postion = "option";
-
-        $value = $option["option"];
-        $value = "'$value'";
-        $pdo -> query ("UPDATE quiz_options SET $postion = $value WHERE quiz_option_id = $quiz_option_id;");
+        
+        // UPDATE FIELDS
+        $fields = ["option", "correct"];
+        foreach ($fields as $field) {
+          $value = $option[$field];
+          $value = "'$value'";
+          if ($field === "correct") {
+            $value = $option[$field] ? "true" : "false";
+          }
+          $pdo -> query ("UPDATE quiz_options SET $field = $value WHERE quiz_option_id = $quiz_option_id;");
+        }
       }
     }
   }
-  
+
   return [
     "data" => [
       "unitId" => $questions[0]["unit_id"],
+      "quiz_questions" => _get_course_quiz_questions($course_id, $pdo),
+      "quiz_options" => _get_course_quiz_options($course_id, $pdo),
     ]
   ];  
+
 }
 
 function PATCH_quiz_option ($params, $pdo) {
@@ -901,7 +937,6 @@ function PATCH_quiz_option ($params, $pdo) {
     $pdo -> query ("UPDATE quiz_options SET $field = $value WHERE quiz_option_id = $quiz_option_id;");
   }
 
-  
 
   return [
     "data" => [

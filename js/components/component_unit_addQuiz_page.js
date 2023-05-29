@@ -56,6 +56,18 @@ function render_page (page, index) {
 
             render_option(option);
         }
+
+        //Unchecks the old chosen option
+        let allCheckBoxes = page.querySelectorAll(".optionsQuizStudent div input");
+        allCheckBoxes.forEach(checkBox => {
+            checkBox.addEventListener("click", ()=>{
+                allCheckBoxes.forEach(box => {
+                    if(checkBox != box){
+                        box.checked = false;
+                    }
+                })
+            })
+        });
     }
 }
 
@@ -67,5 +79,5 @@ function render_option (option) {
         <div>
             <textarea class="quizStudentAnswer"></textarea>
         </div>
-    `
+    `;
 }

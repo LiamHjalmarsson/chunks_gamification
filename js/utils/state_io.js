@@ -64,6 +64,25 @@ export default {
       middleware: () => { }
     },
 
+    {
+      events: ["db::get::badges::received"],
+      middleware: () => { 
+        //State.user.badges = response.badges;
+      }
+    },
+    {
+      events: ["db::patch::streak::received"],
+      middleware: (response, params) => {
+        State.user.current_streak = response.current_streak[0].current_streak;
+        State.user.high_Streak = response.high_Streak[0].high_Streak;
+
+        if(document.querySelector(".currentStreak")){
+          document.querySelector(".currentStreak").textContent = State.user.current_streak;
+        }
+
+      }
+    },
+
     // USERS
     {
       events: ["db::delete::user::received"],
@@ -151,6 +170,13 @@ export default {
           State.quiz_questions.splice(index, 1);
           State.quiz_questions.push(question);
         });
+      }
+    },
+    {
+      events: ["db::post::units_quizs_questions::received"],
+      middleware: (response, params) => {
+        State.quiz_questions = response.quiz_questions;
+        State.quiz_options = response.quiz_options;
       }
     },
 

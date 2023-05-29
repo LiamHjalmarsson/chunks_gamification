@@ -8,7 +8,14 @@ export default render;
     SubPub.subscribe({
         events: ["ranking_done", "db::patch::userBadges::done"],
         listener: render
-    })
+    });
+
+    // When current/high streak are updated
+    SubPub.subscribe({
+        event: " db::patch::streak::done",
+        listener: render
+    });
+
 })();
 
 function render() {
