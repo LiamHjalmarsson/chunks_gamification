@@ -790,21 +790,13 @@ function POST_units_quizs_questions ($params, $pdo) {
     $quiz_question_id = $pdo->lastInsertId();
     
     $field = "question";
-
     $value = $question["question"];
     $pdo -> query ("UPDATE quiz_questions SET $field = '$value' WHERE quiz_question_id = $quiz_question_id");
 
     $fieldOwner = "owner";
-
     $valueOwner = $question["owner"];
     $pdo -> query ("UPDATE quiz_questions SET $fieldOwner = '$valueOwner' WHERE quiz_question_id = $quiz_question_id");
 
-    // $fieldss = ["question", "owner"];
-    // foreach ($fieldss as $field) {
-    //   $value = $question[$field];
-    //   $value = "'$value'";
-    //   $pdo -> query ("UPDATE quiz_questions SET $field = '$value' WHERE quiz_question_id = $quiz_question_id");
-    // }
 
     foreach($options as $option) {
       if ($option["quiz_question_id"] === $question["quiz_question_id"]) {

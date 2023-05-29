@@ -74,7 +74,7 @@ function render( { element } ) {
 
     console.log(state_io.state);
 
-    function calcRanking() {
+    function calcRanking(userID) {
         let badges = state_io.state.user.badges;
         let highStreak = state_io.state.user.high_Streak;
 
@@ -113,7 +113,6 @@ function render( { element } ) {
             }
         });
 
-        
     }
 
     calcRanking();
