@@ -50,7 +50,7 @@ function setUserRank() {
     if (!userRank) {
         SubPub.publish({
             event: "db::post::ranking::request",
-            detail: { params: { user_id: state_io.state.user.user_id, user_name: state_io.state.user.name, rank: "Bronze", course: state_io.state.course.course_id } }
+            detail: { params: { user_id: state_io.state.user.user_id, user_name: state_io.state.user.name, rank: "Bronze", points: 0, course: state_io.state.course.course_id } }
         })
     }
     // If the user DOES have a rank, add to state and publish done event
