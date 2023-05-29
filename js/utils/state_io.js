@@ -76,6 +76,7 @@ export default {
         if(document.querySelector(".currentStreak")){
           document.querySelector(".currentStreak").textContent = State.user.current_streak;
         }
+
       }
     },
 

@@ -73,7 +73,51 @@ function render( { element } ) {
     });
 
     console.log(state_io.state);
-    
+
+    function calcRanking() {
+        let badges = state_io.state.user.badges;
+        let highStreak = state_io.state.user.high_Streak;
+
+        let allChapters = state_io.state.chapters;
+        let allSections = state_io.state.sections;
+        let allUnits = state_io.state.units;
+        let users_units = state_io.state.users_units;
+
+        let chaptersCompleted = [];
+        let sectionsCompleted = [];
+
+        //Loops to check sections completed
+        allSections.forEach(section => {
+            let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
+            let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id && un.check_complete == true);
+
+            if(sectionsUnits.length == sectionsUnitsCompleted.length){
+                sectionsCompleted.push(section);
+            }
+
+        })
+
+        allChapters.forEach(chapter => {
+
+            let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
+            let chaptersSectionsCompleted = [];
+
+            chaptersSections.forEach(section => {
+                if(sectionsCompleted.includes(section)){
+                    chaptersSectionsCompleted.push(section);
+                }
+            });
+
+            if(chaptersSections.length == chaptersSectionsCompleted.length){
+                chaptersCompleted.push(chapter);
+            }
+        });
+
+        
+    }
+
+    calcRanking();
+
     function update () {
           
         let lastQuestionId = parseInt(state_io.state.quiz_questions[state_io.state.quiz_questions.length - 1].quiz_question_id);
