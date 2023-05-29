@@ -268,21 +268,21 @@ function render_checks ({ element, container_dom }) {
       <div class="checks_container">
 
         ${check_box_html("question")}
-        ${is_exercise && is_quiz ? "" : check_box_html("quiz")}
+        ${is_quiz ? "" : check_box_html("quiz")}
         ${is_quiz ? "" : check_box_html("complete")}
 
       </div>
     </div>
   `;
 
-  console.log("Hej");
-  let questionsUserCreated = state_io.state.quiz_questions.filter(question => question.owner === state_io.state.user.name && question.unit_id === element.unit_id);
   let questionsUserAnswerd = state_io.state.quiz_answers.filter(answer => answer.unit_id === element.unit_id);
   console.log(questionsUserAnswerd);
 
   if (questionsUserAnswerd.length >= 3) {
-    document.querySelector(`#check_box_quiz_${element.unit_id}`).disabled = true;
-    document.querySelector(`#check_box_quiz_${element.unit_id}`).checked = true;
+    if( document.querySelector(`#check_box_quiz_${element.unit_id}`)){
+      document.querySelector(`#check_box_quiz_${element.unit_id}`).disabled = true;
+      document.querySelector(`#check_box_quiz_${element.unit_id}`).checked = true;
+    }
   }
 
   // CHECK ACTIONS
@@ -305,6 +305,8 @@ function render_checks ({ element, container_dom }) {
       }, 
       quiz: {
         video: "Jag har sätt videon och redo att skapa quiz frågor",
+        exercise: "Jag har sätt videon och redo att skapa quiz frågor",
+        assignment: "Jag är redo att skapa quiz frågor",
       }
     };
 
@@ -313,12 +315,19 @@ function render_checks ({ element, container_dom }) {
 
     if (questionsUserCreated.length > 2) { 
       if (questionsUserAnswerd.length === 0) {
-        checks.quiz.video = "Start Quiz";
+        checks.quiz.video = "Start quiz";
+        checks.quiz.exercise = "Start quiz";
+        checks.quiz.assignment = "Start quiz";
+
       } else if (questionsUserAnswerd.length > 2) {
-        checks.quiz.video = "Färdig med Quiz";
+        checks.quiz.video = "Färdig med quiz";
+        checks.quiz.exercise = "Färdig med quiz";
+        checks.quiz.assignment = "Färdig med quiz";
       }
       else {
-        checks.quiz.video = "Fortsätt Quiz";
+        checks.quiz.video = "Fortsätt quiz";
+        checks.quiz.exercise = "Fortsätt quiz";
+        checks.quiz.assignment = "Fortsätt quiz";
       }
     } 
 
@@ -326,18 +335,18 @@ function render_checks ({ element, container_dom }) {
     const checked = (users_unit && users_unit[`check_${which}`]) ? "checked": "";
     const quizStudent = which === "quiz" ? "studentCheckBox" : "";
     const disabled = !is_ready ? "disabled" : "";
-
+          
     return `
-        <div class="check_holder">
-          <input type="checkbox" ${checked} class="updatable ${quizStudent}" id="${id}" ${disabled}
-              data-update_data='${JSON.stringify({
-                field_name: 'check_' + which,
-                element
-              })}'  
-          >
-          <label for="${id}">${checks[which][element.kind]}</label>
-        </div>
-    `;
+    <div class="check_holder">
+      <input type="checkbox" ${checked} class="updatable ${quizStudent}" id="${id}" ${disabled}
+          data-update_data='${JSON.stringify({
+            field_name: 'check_' + which,
+            element
+          })}'  
+      >
+      <label for="${id}">${checks[which][element.kind]}</label>
+    </div>
+  `;
   }
 
 }

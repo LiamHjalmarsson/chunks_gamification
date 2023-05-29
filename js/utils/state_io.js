@@ -63,26 +63,7 @@ export default {
       events: ["db::get::date_time::received"],
       middleware: () => { }
     },
-
-    {
-      events: ["db::get::badges::received"],
-      middleware: () => {
-        //State.user.badges = response.badges;
-      }
-    },
-    {
-      events: ["db::patch::streak::received"],
-      middleware: (response, params) => {
-        State.user.current_streak = response.current_streak[0].current_streak;
-        State.user.high_Streak = response.high_Streak[0].high_Streak;
-
-        if (document.querySelector(".currentStreak")) {
-          document.querySelector(".currentStreak").textContent = State.user.current_streak;
-        }
-
-      }
-    },
-
+  
     // USERS
     {
       events: ["db::delete::user::received"],
@@ -111,6 +92,8 @@ export default {
         const index = State.users_units.findIndex(uu => uu.unit_id === response.users_unit.unit_id);
         State.users_units.splice(index, 1);
         State.users_units.push(response.users_unit);
+
+        calcRanking();
       }
     },
 
@@ -327,20 +310,73 @@ export default {
       middleware: (response) => { State.user.badges = response.badges[0].badges }
     },
     {
-      events: ["db::patch::ranking::received", "db::patch::points::received"],
-      middleware: (response) => { State.rankings = response.rankings }
-    },
-    {
       events: ["db::get::rankings::received"],
       middleware: (response) => { State.rankings = response.rankings }
     },
     {
       events: ["db::post::ranking::received"],
       middleware: (response) => {
-        console.log(response)
         State.rankings = response.rankings
       }
-    }
+    },
+    {
+      events: ["db::patch::points::received"],
+      middleware: (response) => { 
+
+        let usersPoints = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].points;
+        
+        SubPub.publish({
+          event: `db::patch::ranking::request`,
+          detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points:usersPoints} }
+      });
+      }
+    },
+    {
+      events: ["db::patch::ranking::received"],
+      middleware: (response) => { 
+
+        State.rankings = response.rankings; 
+
+        State.user.rank = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].rank;
+
+        SubPub.publish({
+          event: "render_user_progress",
+          detail:{}
+
+        });
+
+        if(localStorage.getItem("progress") == "RANKINGS"){
+          document.getElementById("progress_rankings_btn").click();
+        }
+
+      }
+    },
+    {
+      events: ["db::patch::streak::received"],
+      middleware: (response, params) => {
+        State.user.current_streak = response.current_streak[0].current_streak;
+        State.user.high_Streak = response.high_Streak[0].high_Streak;
+
+        if (document.querySelector(".currentStreak")) {
+          document.querySelector(".currentStreak").textContent = State.user.current_streak;
+        }
+
+        SubPub.publish({
+          event: "ranking_done",
+          detail:{}
+        });
+
+        console.log(localStorage.getItem("progressDiv"));
+        console.log(localStorage.getItem("progress"));
+
+        if(localStorage.getItem("progressDiv") == "open" && localStorage.getItem("progress") == "PROGRESS"){
+            SubPub.publish({
+            event: "render_user_progress"
+          });
+        }
+      }
+    },
+
   ];
 
   subscriptions.forEach(sb => {
@@ -579,3 +615,61 @@ function is_answer_correct({ answer }) {
   return option.correct;
 }
 
+function calcRanking() {
+  let highStreak = State.user.high_Streak;
+
+  let allChapters = State.chapters;
+  let allSections = State.sections;
+  let allUnits = State.units;
+  let users_units = State.users_units;
+
+  let chaptersCompleted = [];
+  let sectionsCompleted = [];
+
+  //Loops to check sections completed
+  allSections.forEach(section => {
+      let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
+      let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id && un.check_complete == true);
+
+      if(sectionsUnits.length == sectionsUnitsCompleted.length){
+          sectionsCompleted.push(section);
+      }
+
+  });
+
+  allChapters.forEach(chapter => {
+
+      let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
+      let chaptersSectionsCompleted = [];
+
+      chaptersSections.forEach(section => {
+          if(sectionsCompleted.includes(section)){
+              chaptersSectionsCompleted.push(section);
+          }
+      });
+
+      if(chaptersSections.length == chaptersSectionsCompleted.length){
+          chaptersCompleted.push(chapter);
+      }
+  });
+
+  let points = sectionsCompleted.length;
+
+  chaptersCompleted.forEach(chapter => {
+      points += chapter.spot;
+  });
+
+  sectionsCompleted.forEach(sect => {
+    points++;
+  });
+  
+  if(highStreak != null){
+    points += parseInt(highStreak);
+  }
+
+  SubPub.publish({
+    event: "db::patch::points::request",
+    detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: points } }
+  })
+
+}

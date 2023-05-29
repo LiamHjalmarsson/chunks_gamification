@@ -59,6 +59,7 @@ function render() {
     `
     // On close click
     document.getElementById("progress_close_btn").addEventListener('click', () => {
+        localStorage.setItem("progressDiv", "closed");
         progressDiv.style.padding = '0'
         progressDiv.style.height = '0';
         progressDiv.style.opacity = '0';
@@ -68,10 +69,12 @@ function render() {
 }
 
 function switchRankingProgress() {
+ 
     const progressDiv = document.getElementById("content_user_progress");
     const btn = document.getElementById("progress_rankings_btn");
     console.log(btn.innerHTML)
     if (btn.innerHTML == "RANKINGS") {
+        localStorage.setItem("progress", "RANKINGS");
         btn.innerHTML = "PROGRESS";
         progressDiv.style.height = 'auto';
         progressDiv.style.maxHeight = '35vw';
@@ -80,6 +83,7 @@ function switchRankingProgress() {
         fillRanking()
     }
     else if (btn.innerHTML == "PROGRESS") {
+        localStorage.setItem("progress", "PROGRESS");
         btn.innerHTML = "RANKINGS";
         progressDiv.style.height = '20vw';
         progressDiv.style.maxHeight = '20vw';
@@ -114,14 +118,8 @@ function fillRanking() {
 }
 
 function fillProgress() {
-    // On ranking click
-    document.getElementById("progress_rankings_btn").addEventListener('click', () => {
-        SubPub.publish({
-            event: "render_ranking"
-        });
-    })
-    renderProgressRanking()
-    renderBadges()
+    renderProgressRanking();
+    renderBadges();
 }
 
 // RENDER ALL BADGES
@@ -181,6 +179,7 @@ function badgeHover(badge) {
 function renderProgressRanking() {
     // Current rank (img + text)
     document.getElementById("progress_rank_img").style.backgroundImage = `url(../media/${state_io.state.user.rank.toLowerCase()}.png)`;
+    console.log(state_io.state.user.rank);
     document.getElementById("progress_rank_current").innerHTML = `Current rank: ${state_io.state.user.rank}`;
 
     // Next rank (progress + text)

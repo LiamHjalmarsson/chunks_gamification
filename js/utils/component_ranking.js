@@ -37,6 +37,11 @@ export const ranking = { calculateRank, calculatePoints, calculateNextRank, patc
         event: "db::patch::userBadges::done",
         listener: calculateRank
     });
+  
+      SubPub.subscribe({
+        event: "db::patch::streak::donee",
+        listener: setUserRank
+    });
 
     SubPub.subscribe({
         event: "db::patch::streak::done",
@@ -78,19 +83,19 @@ function calculateRank() {
             rank = "Bronze";
             badgenr = 1;
             break;
-        case (totalPoints >= 10 && totalPoints <= 19):
+        case (totalPoints >= 10 && totalPoints <= 39):
             rank = "Silver";
             badgenr = 2;
             break;
-        case (totalPoints >= 20 && totalPoints <= 29):
+        case (totalPoints >= 40 && totalPoints <= 69):
             rank = "Gold";
             badgenr = 3;
             break;
-        case (totalPoints >= 30 && totalPoints <= 39):
+        case (totalPoints >= 70 && totalPoints <= 99):
             rank = "Diamond";
             badgenr = 4;
             break;
-        case (totalPoints >= 40):
+        case (totalPoints >= 100):
             rank = "Platinum";
             badgenr = 5;
             break;
@@ -99,11 +104,11 @@ function calculateRank() {
     }
     if (rank !== state_io.state.user.rank) {
         state_io.state.user.rank = rank;
-        // Patch rank in DB
-        SubPub.publish({
-            event: `db::patch::ranking::request`,
-            detail: { params: { user_id: state_io.state.user.user_id, rank: rank, course: state_io.state.course.course_id } }
-        });
+        // // Patch rank in DB
+        // SubPub.publish({
+        //     event: `db::patch::ranking::request`,
+        //     detail: { params: { user_id: state_io.state.user.user_id, rank: rank, course: state_io.state.course.course_id } }
+        // });
         // Give badge for latest rank
         patchBadges(`${state_io.state.course.course_id}.${badgenr}`)
     }
@@ -113,23 +118,28 @@ function calculateRank() {
 function calculateNextRank() {
     let nextRankTitle;
     let percentageDone;
-    let totalPoints = calculatePoints()
+    let totalPoints = state_io.state.rankings.filter(obj => obj.userId == state_io.state.user.user_id && obj.course == state_io.state.course.course_id)[0].points;
+
+    if(totalPoints == ""){
+        totalPoints = 0;
+    }
+
     switch (true) {
         case (totalPoints <= 9):
             nextRankTitle = "Silver";
             percentageDone = (100 * getLastDigit(totalPoints)) / 10;
             break;
-        case (totalPoints >= 10 && totalPoints <= 19):
+        case (totalPoints >= 10 && totalPoints <= 39):
             nextRankTitle = "Gold";
-            percentageDone = (100 * getLastDigit(totalPoints)) / 10;
+            percentageDone = (100 * getLastDigit(totalPoints)) / 40;
             break;
-        case (totalPoints >= 20 && totalPoints <= 29):
+        case (totalPoints >= 40 && totalPoints <= 69):
             nextRankTitle = "Diamond";
-            percentageDone = (100 * getLastDigit(totalPoints)) / 10;
+            percentageDone = (100 * getLastDigit(totalPoints)) / 70;
             break;
-        case (totalPoints >= 30 && totalPoints <= 39):
+        case (totalPoints >= 70 && totalPoints <= 99):
             nextRankTitle = "Platinum";
-            percentageDone = (100 * getLastDigit(totalPoints)) / 10;
+            percentageDone = (100 * getLastDigit(totalPoints)) / 100;
             break;
         case (totalPoints >= 40):
             nextRankTitle = "You're at the highest rank!";
