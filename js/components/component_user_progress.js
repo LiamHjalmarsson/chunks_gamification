@@ -43,6 +43,91 @@ function render() {
                 </div>
             </div>
         </div>
+        <div id="rankings_container" style="display: none;">
+            <div id="rankings_wrapper">
+                <div id="rankings_top">
+                    <div>User</div>
+                    <div>Rank</div>
+                    <div>Highest streak</div>
+                    <div>Points</div>
+                </div>
+                <div id="rankings_content">
+                    <div class="rankings_content_item">
+                        <div>day_lady</div>
+                        <div>Bronze</div>
+                        <div>12</div>
+                        <div>7</div>
+                    </div>
+                    <div class="rankings_content_item">
+                        <div>day_lady</div>
+                        <div>Bronze</div>
+                        <div>12</div>
+                        <div>7</div>
+                    </div>
+                    <div class="rankings_content_item">
+                        <div>day_lady</div>
+                        <div>Bronze</div>
+                        <div>12</div>
+                        <div>7</div>
+                    </div>
+                    <div class="rankings_content_item">
+                        <div>day_lady</div>
+                        <div>Bronze</div>
+                        <div>12</div>
+                        <div>7</div>
+                    </div>
+                    <div class="rankings_content_item">
+                    <div>day_lady</div>
+                    <div>Bronze</div>
+                    <div>12</div>
+                    <div>7</div>
+                </div>
+                <div class="rankings_content_item">
+                    <div>day_lady</div>
+                    <div>Bronze</div>
+                    <div>12</div>
+                    <div>7</div>
+                </div>
+                <div class="rankings_content_item">
+                    <div>day_lady</div>
+                    <div>Bronze</div>
+                    <div>12</div>
+                    <div>7</div>
+                </div>
+                <div class="rankings_content_item">
+                    <div>day_lady</div>
+                    <div>Bronze</div>
+                    <div>12</div>
+                    <div>7</div>
+                </div>
+                <div class="rankings_content_item">
+                <div>day_lady</div>
+                <div>Bronze</div>
+                <div>12</div>
+                <div>7</div>
+            </div>
+            <div class="rankings_content_item">
+                <div>day_lady</div>
+                <div>Bronze</div>
+                <div>12</div>
+                <div>7</div>
+            </div>
+            <div class="rankings_content_item">
+                <div>day_lady</div>
+                <div>Bronze</div>
+                <div>12</div>
+                <div>7</div>
+            </div>
+            <div class="rankings_content_item">
+                <div>day_lady</div>
+                <div>Bronze</div>
+                <div>12</div>
+                <div>7</div>
+            </div>
+                
+                </div>
+            </div>
+        </div>
         <button id="progress_rankings_btn">RANKINGS</button>
     `
     // On close click
@@ -51,7 +136,29 @@ function render() {
         progressDiv.style.height = '0';
         progressDiv.style.opacity = '0';
     })
+    document.getElementById("progress_rankings_btn").addEventListener('click', switchRankingProgress)
     fillProgressRanking()
+}
+
+function switchRankingProgress() {
+    const progressDiv = document.getElementById("content_user_progress");
+    const btn = document.getElementById("progress_rankings_btn");
+    console.log(btn.innerHTML)
+    if (btn.innerHTML == "RANKINGS") {
+        btn.innerHTML = "PROGRESS";
+        progressDiv.style.height = 'auto';
+        progressDiv.style.maxHeight = '35vw';
+        document.getElementById("progress_container").style.display = "none";
+        document.getElementById("rankings_container").style.removeProperty("display")
+    }
+    else if (btn.innerHTML == "PROGRESS") {
+        btn.innerHTML = "RANKINGS";
+        progressDiv.style.height = '20vw';
+        progressDiv.style.maxHeight = '20vw';
+        document.getElementById("rankings_container").style.display = "none";
+        document.getElementById("progress_container").style.removeProperty("display")
+    }
+
 }
 
 function fillProgressRanking() {
