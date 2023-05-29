@@ -158,6 +158,54 @@ justify-content: center;
     text-align: center;
 }
 
+#rankings_container{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#rankings_wrapper{
+    width: 80%;
+    height: 100%;
+    overflow-y: scroll;
+    border-radius: 10px 10px 10px 10px;
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+}
+
+#rankings_wrapper::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+}
+
+#rankings_top{
+    padding: 2vh;
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background-color: var(--color_accent_1);
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    z-index: 10;
+    border-radius: 10px 10px 0px 0px;
+}
+
+#rankings_content{
+    overflow-y: scroll;
+    border-radius: 0px 0px 10px 10px;
+}
+
+#rankings_content > div{
+    padding: 2vh;
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background-color: var(--color_back_1);
+    text-align: center;
+}
 
 
 
