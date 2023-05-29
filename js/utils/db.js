@@ -43,7 +43,7 @@ export default {}
       "db::post::user::request",
       "db::post::units_quizs_questions::request",
       "db::patch::streak::request",
-  
+
       // USERS_UNITS
       "db::patch::users_units::request",
       "db::patch::users_units_questionsAnswered::request",
@@ -91,7 +91,8 @@ export default {}
       // RANK
       "db::get::rankings::request",
       "db::post::ranking::request",
-      "db::patch::ranking::request"
+      "db::patch::ranking::request",
+      "db::patch::points::request"
     ];
 
     events.forEach(event => {
