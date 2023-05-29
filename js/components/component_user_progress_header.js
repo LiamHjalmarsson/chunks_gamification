@@ -39,6 +39,8 @@ function render() {
 
     // On progress header click, publish event
     progressHeader.addEventListener('click', () => {
+        localStorage.setItem("progressDiv", "open");
+        
         SubPub.publish({
             event: "render_user_progress"
         });
@@ -48,9 +50,9 @@ function render() {
 function fillProgressHeader() {
     // High streak
     if (!state_io.state.user.high_Streak) {
-        document.getElementById("progress_header_currentstreak").innerHTML = `Current streak: No streak yet...`
+        document.getElementById("progress_header_currentstreak").innerHTML = `High streak: No streak yet...`
     } else {
-        document.getElementById("progress_header_currentstreak").innerHTML = `Current streak: ${state_io.state.user.high_Streak}`
+        document.getElementById("progress_header_currentstreak").innerHTML = `High streak: ${state_io.state.user.high_Streak}`
     }
 
     // If no badges yet

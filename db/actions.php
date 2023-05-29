@@ -278,9 +278,31 @@ function POST_ranking($params, $pdo){
 
 function PATCH_ranking($params, $pdo){
     $user_id = $params["user_id"];
-    $rank = $params["rank"];
     $course = $params["course"];
+    $points = $params["points"];
+    
+    $rank = "";
 
+    switch (true) {
+      case ($points <= 9):
+          $rank = "Bronze";
+          break;
+      case ($points >= 10 && $points <= 39):
+          $rank = "Silver";
+          break;
+      case ($points >= 40 && $points <= 69):
+          $rank = "Gold";
+          break;
+      case ($points >= 70 && $points <= 99):
+          $rank = "Diamond";
+          break;
+      case ($points >= 100):
+          $rank = "Platinum";
+          break;
+      default:
+          break;
+    } 
+  
     $pdo -> query("UPDATE rankings SET rank = '$rank' WHERE userId = '$user_id' AND course = '$course'");
 
     return [

@@ -63,26 +63,7 @@ export default {
       events: ["db::get::date_time::received"],
       middleware: () => { }
     },
-    {
-      events: ["db::patch::userBadges::received"],
-      middleware: () => {}
-    },
-    {
-      events: ["db::patch::ranking::received"],
-      middleware: () => {}
-    },
-    {
-      events: ["db::patch::streak::received"],
-      middleware: (response, params) => {
-        State.user.current_streak = response.current_streak[0].current_streak;
-        State.user.high_Streak = response.high_Streak[0].high_Streak;
-
-        if (document.querySelector(".currentStreak")) {
-          document.querySelector(".currentStreak").textContent = State.user.current_streak;
-        }
-      }
-    },
-
+  
     // USERS
     {
       events: ["db::delete::user::received"],
@@ -329,10 +310,6 @@ export default {
       middleware: (response) => { State.user.badges = response.badges[0].badges }
     },
     {
-      events: ["db::patch::ranking::received", "db::patch::points::received"],
-      middleware: (response) => { State.rankings = response.rankings }
-    },
-    {
       events: ["db::get::rankings::received"],
       middleware: (response) => { State.rankings = response.rankings }
     },
@@ -342,7 +319,57 @@ export default {
         console.log(response)
         State.rankings = response.rankings
       }
-    }
+    },
+    {
+      events: ["db::patch::points::received"],
+      middleware: (response) => { 
+        SubPub.publish({
+          event: `db::patch::ranking::request`,
+          detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points:response.rankings["points"]} }
+      });
+      }
+    },
+    {
+      events: ["db::patch::ranking::received"],
+      middleware: (response) => { 
+        State.rankings = response.rankings; 
+
+        SubPub.publish({
+          event: "render_user_progress"
+        });
+
+        if(localStorage.getItem("progress") == "RANKINGS"){
+          document.getElementById("progress_rankings_btn").click();
+        }
+
+      }
+    },
+    {
+      events: ["db::patch::streak::received"],
+      middleware: (response, params) => {
+        State.user.current_streak = response.current_streak[0].current_streak;
+        State.user.high_Streak = response.high_Streak[0].high_Streak;
+
+        if (document.querySelector(".currentStreak")) {
+          document.querySelector(".currentStreak").textContent = State.user.current_streak;
+        }
+
+        SubPub.publish({
+          event: "ranking_done",
+          detail:{}
+        });
+
+        console.log(localStorage.getItem("progressDiv"));
+        console.log(localStorage.getItem("progress"));
+
+        if(localStorage.getItem("progressDiv") == "open" && localStorage.getItem("progress") == "PROGRESS"){
+            SubPub.publish({
+            event: "render_user_progress"
+          });
+        }
+      }
+    },
+
   ];
 
   subscriptions.forEach(sb => {
@@ -581,8 +608,7 @@ function is_answer_correct({ answer }) {
   return option.correct;
 }
 
-function calcRanking(userID) {
-  let badges = State.user.badges;
+function calcRanking() {
   let highStreak = State.user.high_Streak;
 
   let allChapters = State.chapters;
@@ -625,9 +651,17 @@ function calcRanking(userID) {
   chaptersCompleted.forEach(chapter => {
       points += chapter.spot;
   });
+
+  sectionsCompleted.forEach(sect => {
+    points++;
+  });
   
+  points += parseInt(highStreak);
+console.log(points);
+
   SubPub.publish({
     event: "db::patch::points::request",
     detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: points } }
-})
+  })
+
 }
