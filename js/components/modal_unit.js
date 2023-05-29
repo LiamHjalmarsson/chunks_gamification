@@ -268,14 +268,13 @@ function render_checks ({ element, container_dom }) {
       <div class="checks_container">
 
         ${check_box_html("question")}
-        ${is_exercise && is_quiz ? "" : check_box_html("quiz")}
+        ${is_quiz ? "" : check_box_html("quiz")}
         ${is_quiz ? "" : check_box_html("complete")}
 
       </div>
     </div>
   `;
 
-  console.log("Hej");
   let questionsUserCreated = state_io.state.quiz_questions.filter(question => question.owner === state_io.state.user.name && question.unit_id === element.unit_id);
   let questionsUserAnswerd = state_io.state.quiz_answers.filter(answer => answer.unit_id === element.unit_id);
   console.log(questionsUserAnswerd);
@@ -305,6 +304,8 @@ function render_checks ({ element, container_dom }) {
       }, 
       quiz: {
         video: "Jag har sätt videon och redo att skapa quiz frågor",
+        exercise: "Jag har sätt videon och redo att skapa quiz frågor",
+        assignment: "Jag är redo att skapa quiz frågor",
       }
     };
 
@@ -326,18 +327,18 @@ function render_checks ({ element, container_dom }) {
     const checked = (users_unit && users_unit[`check_${which}`]) ? "checked": "";
     const quizStudent = which === "quiz" ? "studentCheckBox" : "";
     const disabled = !is_ready ? "disabled" : "";
-
+          
     return `
-        <div class="check_holder">
-          <input type="checkbox" ${checked} class="updatable ${quizStudent}" id="${id}" ${disabled}
-              data-update_data='${JSON.stringify({
-                field_name: 'check_' + which,
-                element
-              })}'  
-          >
-          <label for="${id}">${checks[which][element.kind]}</label>
-        </div>
-    `;
+    <div class="check_holder">
+      <input type="checkbox" ${checked} class="updatable ${quizStudent}" id="${id}" ${disabled}
+          data-update_data='${JSON.stringify({
+            field_name: 'check_' + which,
+            element
+          })}'  
+      >
+      <label for="${id}">${checks[which][element.kind]}</label>
+    </div>
+  `;
   }
 
 }

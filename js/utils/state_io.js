@@ -63,12 +63,13 @@ export default {
       events: ["db::get::date_time::received"],
       middleware: () => { }
     },
-
     {
-      events: ["db::get::badges::received"],
-      middleware: () => {
-        //State.user.badges = response.badges;
-      }
+      events: ["db::patch::userBadges::received"],
+      middleware: () => {}
+    },
+    {
+      events: ["db::patch::ranking::received"],
+      middleware: () => {}
     },
     {
       events: ["db::patch::streak::received"],
@@ -79,7 +80,6 @@ export default {
         if (document.querySelector(".currentStreak")) {
           document.querySelector(".currentStreak").textContent = State.user.current_streak;
         }
-
       }
     },
 
@@ -111,6 +111,8 @@ export default {
         const index = State.users_units.findIndex(uu => uu.unit_id === response.users_unit.unit_id);
         State.users_units.splice(index, 1);
         State.users_units.push(response.users_unit);
+
+        calcRanking();
       }
     },
 
@@ -579,3 +581,53 @@ function is_answer_correct({ answer }) {
   return option.correct;
 }
 
+function calcRanking(userID) {
+  let badges = State.user.badges;
+  let highStreak = State.user.high_Streak;
+
+  let allChapters = State.chapters;
+  let allSections = State.sections;
+  let allUnits = State.units;
+  let users_units = State.users_units;
+
+  let chaptersCompleted = [];
+  let sectionsCompleted = [];
+
+  //Loops to check sections completed
+  allSections.forEach(section => {
+      let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
+      let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id && un.check_complete == true);
+
+      if(sectionsUnits.length == sectionsUnitsCompleted.length){
+          sectionsCompleted.push(section);
+      }
+
+  });
+
+  allChapters.forEach(chapter => {
+
+      let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
+      let chaptersSectionsCompleted = [];
+
+      chaptersSections.forEach(section => {
+          if(sectionsCompleted.includes(section)){
+              chaptersSectionsCompleted.push(section);
+          }
+      });
+
+      if(chaptersSections.length == chaptersSectionsCompleted.length){
+          chaptersCompleted.push(chapter);
+      }
+  });
+
+  let points = sectionsCompleted.length;
+
+  chaptersCompleted.forEach(chapter => {
+      points += chapter.spot;
+  });
+  
+  SubPub.publish({
+    event: "db::patch::points::request",
+    detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: points } }
+})
+}
