@@ -104,6 +104,12 @@ function fillRanking() {
         <div>${rankings[i].points}</div>
         `
         container.appendChild(div)
+
+        let userBadges = state_io.state.user.badges;
+        userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
+        if (i + 1 <= 10 && !userBadges.includes(`${state_io.state.course.course_id}.9`)) {
+            ranking.patchBadges(`${state_io.state.course.course_id}.9`)
+        }
     }
 }
 

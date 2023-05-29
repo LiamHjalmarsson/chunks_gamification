@@ -37,6 +37,11 @@ export const ranking = { calculateRank, calculatePoints, calculateNextRank, patc
         event: "db::patch::userBadges::done",
         listener: calculateRank
     });
+
+    SubPub.subscribe({
+        event: "db::patch::streak::done",
+        listener: (response) => { checkStreakBadge(response) }
+    });
 })();
 
 function setUserRank() {
@@ -206,6 +211,26 @@ function patchBadges(newBadge) {
         event: `db::patch::userBadges::request`,
         detail: { params: { user_id: state_io.state.user.user_id, badges: userBadges } }
     });
+}
+
+function checkStreakBadge(response) {
+    let streak = parseInt(response.response.high_Streak[0].high_Streak);
+    let userBadges = state_io.state.user.badges;
+    // Remove first and last character [] and split on ,
+    userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
+
+    console.log(streak)
+    if (streak >= 50) {
+        if (!userBadges.includes(`${state_io.state.course.course_id}.8`)) {
+            patchBadges(`${state_io.state.course.course_id}.8`)
+        }
+    } else if (streak >= 10) {
+        console.log("hello")
+        if (!userBadges.includes(`${state_io.state.course.course_id}.7`)) {
+            patchBadges(`${state_io.state.course.course_id}.7`)
+        }
+    }
+
 }
 
 //setTimeout(() => { patchBadges(2.6) }, 3000)
