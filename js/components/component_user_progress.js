@@ -43,6 +43,18 @@ function render() {
                 </div>
             </div>
         </div>
+        <div id="rankings_container" style="display: none;">
+            <div id="rankings_wrapper">
+                <div id="rankings_top">
+                    <div>Nr.</div>
+                    <div>User</div>
+                    <div>Rank</div>
+                    <div>Points</div>
+                </div>
+                <div id="rankings_content">
+                </div>
+            </div>
+        </div>
         <button id="progress_rankings_btn">RANKINGS</button>
     `
     // On close click
@@ -51,10 +63,51 @@ function render() {
         progressDiv.style.height = '0';
         progressDiv.style.opacity = '0';
     })
-    fillProgressRanking()
+    document.getElementById("progress_rankings_btn").addEventListener('click', switchRankingProgress)
+    fillProgress()
 }
 
-function fillProgressRanking() {
+function switchRankingProgress() {
+    const progressDiv = document.getElementById("content_user_progress");
+    const btn = document.getElementById("progress_rankings_btn");
+    console.log(btn.innerHTML)
+    if (btn.innerHTML == "RANKINGS") {
+        btn.innerHTML = "PROGRESS";
+        progressDiv.style.height = 'auto';
+        progressDiv.style.maxHeight = '35vw';
+        document.getElementById("progress_container").style.display = "none";
+        document.getElementById("rankings_container").style.removeProperty("display");
+        fillRanking()
+    }
+    else if (btn.innerHTML == "PROGRESS") {
+        btn.innerHTML = "RANKINGS";
+        progressDiv.style.height = '20vw';
+        progressDiv.style.maxHeight = '20vw';
+        document.getElementById("rankings_container").style.display = "none";
+        document.getElementById("progress_container").style.removeProperty("display");
+    }
+
+}
+
+function fillRanking() {
+    const container = document.getElementById("rankings_content");
+    container.innerHTML = "";
+    let rankings = state_io.state.rankings;
+    rankings.sort((a, b) => b.points - a.points)
+
+    for (let i = 0; i < rankings.length; i++) {
+        let div = document.createElement("div");
+        div.innerHTML = `
+        <div>${i + 1}</div>
+        <div>${rankings[i].userName}</div>
+        <div>${rankings[i].rank}</div>
+        <div>${rankings[i].points}</div>
+        `
+        container.appendChild(div)
+    }
+}
+
+function fillProgress() {
     // On ranking click
     document.getElementById("progress_rankings_btn").addEventListener('click', () => {
         SubPub.publish({
