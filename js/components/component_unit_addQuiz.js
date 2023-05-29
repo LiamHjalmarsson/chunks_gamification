@@ -95,7 +95,7 @@ function render( { element } ) {
                 sectionsCompleted.push(section);
             }
 
-        })
+        });
 
         allChapters.forEach(chapter => {
 
@@ -112,6 +112,15 @@ function render( { element } ) {
                 chaptersCompleted.push(chapter);
             }
         });
+
+        let points = sectionsCompleted.length;
+
+        chaptersCompleted.forEach(chapter => {
+            points += chapter.spot;
+            console.log(chapter.spot);
+        });
+
+        console.log(points);
 
     }
 
