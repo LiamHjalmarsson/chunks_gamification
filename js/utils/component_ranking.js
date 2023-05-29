@@ -99,11 +99,11 @@ function calculateRank() {
     }
     if (rank !== state_io.state.user.rank) {
         state_io.state.user.rank = rank;
-        // Patch rank in DB
-        SubPub.publish({
-            event: `db::patch::ranking::request`,
-            detail: { params: { user_id: state_io.state.user.user_id, rank: rank, course: state_io.state.course.course_id } }
-        });
+        // // Patch rank in DB
+        // SubPub.publish({
+        //     event: `db::patch::ranking::request`,
+        //     detail: { params: { user_id: state_io.state.user.user_id, rank: rank, course: state_io.state.course.course_id } }
+        // });
         // Give badge for latest rank
         patchBadges(`${state_io.state.course.course_id}.${badgenr}`)
     }

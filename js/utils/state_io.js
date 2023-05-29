@@ -316,26 +316,33 @@ export default {
     {
       events: ["db::post::ranking::received"],
       middleware: (response) => {
-        console.log(response)
         State.rankings = response.rankings
       }
     },
     {
       events: ["db::patch::points::received"],
       middleware: (response) => { 
+
+        let usersPoints = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].points;
+        
         SubPub.publish({
           event: `db::patch::ranking::request`,
-          detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points:response.rankings["points"]} }
+          detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points:usersPoints} }
       });
       }
     },
     {
       events: ["db::patch::ranking::received"],
       middleware: (response) => { 
+
         State.rankings = response.rankings; 
 
+        State.user.rank = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].rank;
+
         SubPub.publish({
-          event: "render_user_progress"
+          event: "render_user_progress",
+          detail:{}
+
         });
 
         if(localStorage.getItem("progress") == "RANKINGS"){
@@ -656,8 +663,9 @@ function calcRanking() {
     points++;
   });
   
-  points += parseInt(highStreak);
-console.log(points);
+  if(highStreak != null){
+    points += parseInt(highStreak);
+  }
 
   SubPub.publish({
     event: "db::patch::points::request",

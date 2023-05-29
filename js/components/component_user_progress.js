@@ -173,6 +173,7 @@ function badgeHover(badge) {
 function renderProgressRanking() {
     // Current rank (img + text)
     document.getElementById("progress_rank_img").style.backgroundImage = `url(../media/${state_io.state.user.rank.toLowerCase()}.png)`;
+    console.log(state_io.state.user.rank);
     document.getElementById("progress_rank_current").innerHTML = `Current rank: ${state_io.state.user.rank}`;
 
     // Next rank (progress + text)
