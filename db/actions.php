@@ -17,6 +17,8 @@ function GET_course ($params, $pdo) {
       "quiz_questions" => _get_course_quiz_questions($course_id, $pdo),
       "quiz_options" => _get_course_quiz_options($course_id, $pdo),
       "quiz_answers" => _get_course_quiz_answers($user_id, $course_id, $pdo),
+      "badges" => array_from_query($pdo, "SELECT * FROM badges;"),
+      "rankings" => array_from_query($pdo, "SELECT * from rankings WHERE course = '$course_id'")
     ]
   ];
 
@@ -212,17 +214,28 @@ function PATCH ($params, $pdo) {
 // QUIZ USER random 
 
 // BADGES
-function GET_badges($params, $pdo){
-  //return array_from_query($pdo, "SELECT * FROM badges;");
+// function GET_badges($params, $pdo){
+//   //return array_from_query($pdo, "SELECT * FROM badges;");
+//   return [
+//     "data" => [
+//       "badges" => array_from_query($pdo, "SELECT * FROM badges;")
+//     ]
+//   ];
+// }
 
+
+
+// BADGES
+function GET_userBadges($params, $pdo){
+  $user_id = $params["user_id"];
   return [
     "data" => [
-      "badges" => array_from_query($pdo, "SELECT * FROM badges;")
+      "badges" =>   array_from_query($pdo, "SELECT badges from users WHERE user_id = '$user_id'")
     ]
   ];
 }
 
-function PATCH_badges($params, $pdo){
+function PATCH_userBadges($params, $pdo){
   $user_id = $params["user_id"];
   $badges = $params["badges"];
   $pdo -> query("UPDATE users SET badges = '$badges' WHERE user_id = $user_id");
@@ -233,6 +246,82 @@ function PATCH_badges($params, $pdo){
     ]
   ];
 }
+
+// RANKINGS
+function GET_rankings($params, $pdo){
+  $course_id = $params["course_id"];
+  return [
+    "data" => [
+      "rankings" => array_from_query($pdo, "SELECT * from rankings WHERE course = '$course_id'")
+    ]
+  ];
+}
+
+function POST_ranking($params, $pdo){
+  $course = $params["course"];
+  $user_id = $params["user_id"];
+  $user_name = $params["user_name"];
+  $rank = $params["rank"];
+
+  $pdo -> query("UPDATE users SET badges = '$badges' WHERE user_id = $user_id");
+  $pdo->query("INSERT INTO rankings(userId, userName, course, rank) VALUES('$user_id', '$user_name', '$course', '$rank')");
+  $pdo->query($sql);
+
+  return [
+    "data" => [
+      "rankings" => array_from_query($pdo, "SELECT * from rankings WHERE course = '$course'"),
+      "rank" => $rank
+    ]
+  ];
+}
+
+function PATCH_ranking($params, $pdo){
+    $user_id = $params["user_id"];
+    $rank = $params["rank"];
+    $course = $params["course"];
+
+    $pdo -> query("UPDATE rankings SET rank = '$rank' WHERE userId = '$user_id' AND course = '$course'");
+
+    return [
+      "data" => [
+        "rankings" => array_from_query($pdo, "SELECT * FROM rankings WHERE course = '$course'")
+      ]
+    ];
+}
+
+// function GET_userRank($params, $pdo){
+//   $user_id = $params["user_id"];
+//   return [
+//     "data" => [
+//       "badges" =>   array_from_query($pdo, "SELECT rank from users WHERE user_id = '$user_id'")
+//     ]
+//   ];
+// }
+
+// function PATCH_userRank($params, $pdo){
+//   $user_id = $params["user_id"];
+//   $rank = $params["rank"];
+//   $pdo -> query("UPDATE users SET rank = '$rank' WHERE user_id = $user_id");
+
+//   return [
+//     "data" => [
+//       "rank" => array_from_query($pdo, "SELECT rank FROM users WHERE user_id = $user_id;")
+//     ]
+//   ];
+// }
+
+// function PATCH_userRank($params, $pdo){
+//   $user_id = $params["user_id"];
+//   $rank = $params["rank"];
+//   $pdo -> query("UPDATE users SET rank = '$rank' WHERE user_id = $user_id");
+
+//   return [
+//     "data" => [
+//       "rankings" => array_from_query($pdo, "SELECT * from rankings WHERE course = '$course_id'")
+//     ]
+//   ];
+// }
+
 
 // STREAK 
 

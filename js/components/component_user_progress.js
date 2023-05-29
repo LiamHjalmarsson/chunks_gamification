@@ -1,9 +1,11 @@
 import state_io from "../utils/state_io.js";
 import { SubPub } from "../utils/subpub.js";
+import { ranking } from "../utils/component_ranking.js";
 
 export default {};
 
 ; (() => {
+    // On header click
     SubPub.subscribe({
         event: "render_user_progress",
         listener: render
@@ -11,7 +13,9 @@ export default {};
 })();
 
 function render() {
+    console.log(state_io.state)
     const progressDiv = document.getElementById("content_user_progress");
+    progressDiv.innerHTML = "";
     progressDiv.style.padding = '15px';
 
     progressDiv.style.height = '15vw';
@@ -19,81 +23,44 @@ function render() {
     progressDiv.style.height = '20vw';
 
     progressDiv.style.opacity = '1';
-
     progressDiv.innerHTML = `
         <button id="progress_close_btn">CLOSE</button>
         <div id="progress_container">
             <div id="progress_rank">
-
-            <div id="progress_rank_current">Current rank: Silver</div>
-                <div id="progress_rank_img"></div>
-                <div id="progress_rank_progressbar">
-                <div><span>Next rank: Diamond</span></div>
-                </div>
-                <div id="progress_stats">
-                    <div>Current streak: 3</div>
-                    <div>Best streak: 5</div>
-                </div>
-
-                <div id="progress_rank_current">Current rank: Silver</div>
+                <div id="progress_rank_current"></div>
                     <div id="progress_rank_img"></div>
                     <div id="progress_rank_progressbar">
-                    <div><span>Next rank: Diamond</span></div>
+                    <div><span></span></div>
                     </div>
                     <div id="progress_stats">
-                        <div>Current streak: 3</div>
-                        <div>Best streak: 5</div>
+                        <div></div>
+                        <div></div>
                     </div>
-
             </div>
             <div id="progress_badges_container">
                 <div>Badges</div>
                 <div id="progress_badges">            
-
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-
                 </div>
             </div>
         </div>
         <button id="progress_rankings_btn">RANKINGS</button>
     `
-
-    fillProgressRanking()
-
-    // On close click: close and empty main container
-
-
     // On close click
-
     document.getElementById("progress_close_btn").addEventListener('click', () => {
         progressDiv.style.padding = '0'
         progressDiv.style.height = '0';
         progressDiv.style.opacity = '0';
     })
-
+    fillProgressRanking()
 }
 
 function fillProgressRanking() {
-
-
     // On ranking click
     document.getElementById("progress_rankings_btn").addEventListener('click', () => {
         SubPub.publish({
             event: "render_ranking"
         });
     })
-
     renderProgressRanking()
     renderBadges()
 }
@@ -101,16 +68,16 @@ function fillProgressRanking() {
 // RENDER ALL BADGES
 function renderBadges() {
     let userBadges = state_io.state.user.badges;
+    userBadges = userBadges.substring(1, userBadges.length - 1);
+    userBadges = userBadges.split(',')
+    let courseBadges = userBadges.filter(b => b.split('.')[0] == state_io.state.course.course_id);
 
     // If no badges yet
-    if (userBadges == "[]") {
+    if (userBadges == [] || courseBadges == "") {
         document.getElementById("progress_badges").innerHTML = "<div>Inga badges ännu!</div>"
     }
-
     // If at least one badge
     else {
-        // Remove first and last character [] and split on ,
-        userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
 
         // Checking if the badge belongs to the current course
         userBadges.forEach(badge => {
@@ -151,80 +118,27 @@ function badgeHover(badge) {
     })
 }
 
+// RENDER PROGRESS OF RANKING
 function renderProgressRanking() {
-    // ADD: IMAGE AND RANK
+    // Current rank (img + text)
+    document.getElementById("progress_rank_img").style.backgroundImage = `url(../media/${state_io.state.user.rank.toLowerCase()}.png)`;
+    document.getElementById("progress_rank_current").innerHTML = `Current rank: ${state_io.state.user.rank}`;
+
+    // Next rank (progress + text)
+    document.querySelector("#progress_rank_progressbar > div > span").innerHTML = `Next rank: ${ranking.calculateNextRank().nextRank}`;
+    document.querySelector("#progress_rank_progressbar > div").style.width = `${ranking.calculateNextRank().percentageDone}%`;
+
+    // Current streak
+    if (!state_io.state.user.current_streak) {
+        document.querySelector("#progress_stats > div:first-child").innerHTML = `Current streak: No streak yet...`;
+    } else {
+        document.querySelector("#progress_stats > div:first-child").innerHTML = `Current streak: ${state_io.state.user.current_streak}`;
+    }
 
     // Highest streak
-    document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: ${state_io.state.user.high_Streak}`;
+    if (!state_io.state.user.high_Streak) {
+        document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: No streak yet...`;
+    } else {
+        document.querySelector("#progress_stats > div:last-child").innerHTML = `Highest streak: ${state_io.state.user.high_Streak}`;
+    }
 }
-
-
-const badges = [
-    {
-        badge: 1,
-        description: "Du har lyckats svara fel 20 gånger på raken!"
-    },
-    {}
-]
-
-function renderRanking() {
-
-}
-
-
-function tryPatchBadges() {
-    // let userBadges = state_io.state.user.badges;
-    // userBadges = userBadges.slice(0, -1);
-    // let newBadge = 2.4;
-    // userBadges = userBadges + "," + newBadge + "]";
-    // console.log(userBadges)
-
-    let userBadges = "[2.1, 5.8, 2.4]"
-    SubPub.publish({
-        event: `db::patch::badges::request`,
-        detail: { params: { user_id: state_io.state.user.user_id, badges: userBadges } }
-    });
-}
-
-setTimeout(tryPatchBadges, 2000)
-
-
-
-/*
-TO DO
-- Transitions (not just height but everything in the container really)
-- Height on... everything?!?!
-    - Mostly to ensure that the height adjusts to fit all badges, but still work with transitions
-- Hover on badges to get descripton
-- Load correct badges from DB
-- Calculate and display correct rank + image + progress bar (these are just placeholders for now)
-- Clean up the code, waaay to many IDs and messy CSS?? 
-- What to display if youre at the top rank + how should the progress bar look then?
-- Add current streak (new key in DB?)
-
-/*
-function render () {
-    töm div i content_course_open div i index.php
-    containerDiv 
-        button close
-            button lister click
-                töm div i content_course_open div i index.php
-         divisonContainer
-            divBadge
-                imageBadge
-            divProgressBar
-                progessBar
-            divStreaks
-                currentSteak
-                bestStreak
-        badgesContainer 
-            loop badges
-                badgeDiv
-                    imageBadge 
-                    ( imageBade hover text info ) 
-        buttonRanking
-            buttonRanking listner click 
-                publish 
-                    event: “render_ranking.”
-}
-*/
