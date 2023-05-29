@@ -262,9 +262,10 @@ function POST_ranking($params, $pdo){
   $user_id = $params["user_id"];
   $user_name = $params["user_name"];
   $rank = $params["rank"];
+  $points = $params["points"];
 
   $pdo -> query("UPDATE users SET badges = '$badges' WHERE user_id = $user_id");
-  $pdo->query("INSERT INTO rankings(userId, userName, course, rank) VALUES('$user_id', '$user_name', '$course', '$rank')");
+  $pdo->query("INSERT INTO rankings(userId, userName, course, rank, points) VALUES('$user_id', '$user_name', '$course', '$rank', '$points')");
   $pdo->query($sql);
 
   return [
@@ -289,38 +290,20 @@ function PATCH_ranking($params, $pdo){
     ];
 }
 
-// function GET_userRank($params, $pdo){
-//   $user_id = $params["user_id"];
-//   return [
-//     "data" => [
-//       "badges" =>   array_from_query($pdo, "SELECT rank from users WHERE user_id = '$user_id'")
-//     ]
-//   ];
-// }
+function PATCH_points($params, $pdo){
+  $user_id = $params["user_id"];
+  $rank = $params["rank"];
+  $course = $params["course"];
+  $points = $params["points"];
 
-// function PATCH_userRank($params, $pdo){
-//   $user_id = $params["user_id"];
-//   $rank = $params["rank"];
-//   $pdo -> query("UPDATE users SET rank = '$rank' WHERE user_id = $user_id");
+  $pdo -> query("UPDATE rankings SET points = '$points' WHERE userId = '$user_id' AND course = '$course'");
 
-//   return [
-//     "data" => [
-//       "rank" => array_from_query($pdo, "SELECT rank FROM users WHERE user_id = $user_id;")
-//     ]
-//   ];
-// }
-
-// function PATCH_userRank($params, $pdo){
-//   $user_id = $params["user_id"];
-//   $rank = $params["rank"];
-//   $pdo -> query("UPDATE users SET rank = '$rank' WHERE user_id = $user_id");
-
-//   return [
-//     "data" => [
-//       "rankings" => array_from_query($pdo, "SELECT * from rankings WHERE course = '$course_id'")
-//     ]
-//   ];
-// }
+  return [
+    "data" => [
+      "rankings" => array_from_query($pdo, "SELECT * FROM rankings WHERE course = '$course'")
+    ]
+  ];
+}
 
 
 // STREAK 

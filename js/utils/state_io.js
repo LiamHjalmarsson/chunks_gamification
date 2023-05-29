@@ -66,7 +66,7 @@ export default {
 
     {
       events: ["db::get::badges::received"],
-      middleware: () => { 
+      middleware: () => {
         //State.user.badges = response.badges;
       }
     },
@@ -76,7 +76,7 @@ export default {
         State.user.current_streak = response.current_streak[0].current_streak;
         State.user.high_Streak = response.high_Streak[0].high_Streak;
 
-        if(document.querySelector(".currentStreak")){
+        if (document.querySelector(".currentStreak")) {
           document.querySelector(".currentStreak").textContent = State.user.current_streak;
         }
 
@@ -327,7 +327,7 @@ export default {
       middleware: (response) => { State.user.badges = response.badges[0].badges }
     },
     {
-      events: ["db::patch::ranking::received"],
+      events: ["db::patch::ranking::received", "db::patch::points::received"],
       middleware: (response) => { State.rankings = response.rankings }
     },
     {
