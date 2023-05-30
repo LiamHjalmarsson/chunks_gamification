@@ -276,7 +276,6 @@ function render_checks ({ element, container_dom }) {
   `;
 
   let questionsUserAnswerd = state_io.state.quiz_answers.filter(answer => answer.unit_id === element.unit_id);
-  console.log(questionsUserAnswerd);
 
   if (questionsUserAnswerd.length >= 3) {
     if( document.querySelector(`#check_box_quiz_${element.unit_id}`)){

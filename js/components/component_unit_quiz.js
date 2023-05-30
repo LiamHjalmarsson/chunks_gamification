@@ -148,14 +148,23 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
 
     optionButton.addEventListener("click", ()=>{
         let currentStreak = state_io.state.user.current_streak;
+        let updatedPoints = parseInt(state_io.state.rankings.find(user => user.userId == state_io.state.user.user_id).points);
+
+        console.log(updatedPoints);
 
         if(currentStreak == null){
           currentStreak = 0;
         }
 
-        //Testa detta istället för en if-sats
-        option.correct ? currentStreak++ : currentStreak = 0;
-        
+        if(option.correct){
+          currentStreak++;
+          updatedPoints++;
+        }
+
+        state_io.state.rankings.find(user => user.userId == state_io.state.user.user_id).points = updatedPoints;
+
+        console.log(state_io.state);
+
         SubPub.publish({
           event: "db::patch::streak::request",
           detail: { params: { currentStreak, user_id:state_io.state.user.user_id }}

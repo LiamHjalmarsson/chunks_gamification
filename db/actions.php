@@ -281,19 +281,19 @@ function PATCH_ranking($params, $pdo){
     $course = $params["course"];
     $points = $params["points"];
     
-    $rank = "";
+    $rank = $params["rank"];
 
-    if($points <= 9){
-      $rank = "Bronze";
-    }elseif ($points >= 10 && $points <= 39) {
-      $rank = "Silver";
-    }elseif ($points >= 40 && $points <= 69) {
-      $rank = "Gold";
-    }elseif ($points >= 70 && $points <= 99) {
-      $rank = "Diamond";
-    }else {
-      $rank = "Platinum";
-    }
+    // if($points <= 9){
+    //   $rank = "Bronze";
+    // }elseif ($points >= 10 && $points <= 39) {
+    //   $rank = "Silver";
+    // }elseif ($points >= 40 && $points <= 69) {
+    //   $rank = "Gold";
+    // }elseif ($points >= 70 && $points <= 99) {
+    //   $rank = "Diamond";
+    // }else {
+    //   $rank = "Platinum";
+    // }
 
     $pdo -> query("UPDATE rankings SET rank = '$rank' WHERE userId = '$user_id' AND course = '$course'");
 
@@ -306,15 +306,38 @@ function PATCH_ranking($params, $pdo){
 
 function PATCH_points($params, $pdo){
   $user_id = $params["user_id"];
-  $rank = $params["rank"];
+  //$rank = $params["rank"];
   $course = $params["course"];
   $points = $params["points"];
 
   $pdo -> query("UPDATE rankings SET points = '$points' WHERE userId = '$user_id' AND course = '$course'");
 
+  $allunits = _get_course_units($params["course"]["course_id"],$pdo);
+  $allchapters = _get_course_chapters($params["course"]["course_id"],$pdo);
+
+  //$totalpoints = (count($allunits) * 3) + (count($allchapters)*5);
+  $totalpoints = count($allunits) * 3;
+  
+  $rank = "";
+
+  if($points < ($totalpoints * 0.25)){
+    $rank = "Bronze";
+  }elseif ($points >= ($totalpoints * 0.25) && $points <= ($totalpoints * 0.5)) {
+    $rank = "Silver";
+  }elseif ($points >= ($totalpoints * 0.5) && $points <= ($totalpoints * 0.75)) {
+    $rank = "Gold";
+  }elseif ($points >= ($totalpoints * 0.75) && $points <= $totalpoints) {
+    $rank = "Diamond";
+  }else {
+    $rank = "Platinum";
+  }
+
+  $pdo -> query("UPDATE rankings SET rank = '$rank' WHERE userId = '$user_id' AND course = '$course'");
+
   return [
     "data" => [
-      "rankings" => array_from_query($pdo, "SELECT * FROM rankings WHERE course = '$course'")
+      "rankings" => array_from_query($pdo, "SELECT * FROM rankings WHERE course = '$course'"),
+      "totalpoints" => $totalpoints
     ]
   ];
 }

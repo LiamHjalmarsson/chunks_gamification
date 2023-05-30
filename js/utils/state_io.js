@@ -324,6 +324,7 @@ export default {
       events: ["db::patch::points::received"],
       middleware: (response) => {
 
+<<<<<<< Updated upstream
         let usersPoints = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].points;
 
         SubPub.publish({
@@ -358,6 +359,20 @@ export default {
           default:
             break
         }
+=======
+      State.rankings = response.rankings; 
+
+      State.user.rank = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].rank;
+
+      SubPub.publish({
+        event: "render_user_progress",
+        detail:{}
+      });
+
+      if(localStorage.getItem("progress") == "RANKINGS"){
+        document.getElementById("progress_rankings_btn").click();
+      }
+>>>>>>> Stashed changes
       }
     },
     {
@@ -403,6 +418,8 @@ export default {
             event: "render_user_progress"
           });
         }
+
+        calcRanking();
       }
     },
 
@@ -645,17 +662,16 @@ function is_answer_correct({ answer }) {
 }
 
 function calcRanking() {
-  let highStreak = State.user.high_Streak;
+  // let allChapters = State.chapters;
+  // let allSections = State.sections;
+  // let allUnits = State.units;
+  // let users_units = State.users_units.filter(unit => unit.check_complete == true);
 
-  let allChapters = State.chapters;
-  let allSections = State.sections;
-  let allUnits = State.units;
-  let users_units = State.users_units;
-
-  let chaptersCompleted = [];
-  let sectionsCompleted = [];
+  // let chaptersCompleted = [];
+  // let sectionsCompleted = [];
 
   //Loops to check sections completed
+<<<<<<< Updated upstream
   allSections.forEach(section => {
     let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
     let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id && un.check_complete == true);
@@ -663,11 +679,23 @@ function calcRanking() {
     if (sectionsUnits.length == sectionsUnitsCompleted.length) {
       sectionsCompleted.push(section);
     }
+=======
+  // allSections.forEach(section => {
+  //     let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
+  //     let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id);
 
-  });
+  //     if(sectionsUnits.length == sectionsUnitsCompleted.length){
+  //         sectionsCompleted.push(section);
+  //     }
+  // });
+>>>>>>> Stashed changes
 
-  allChapters.forEach(chapter => {
+  // allChapters.forEach(chapter => {
 
+  //     let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
+  //     let chaptersSectionsCompleted = [];
+
+<<<<<<< Updated upstream
     let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
     let chaptersSectionsCompleted = [];
 
@@ -681,9 +709,26 @@ function calcRanking() {
       chaptersCompleted.push(chapter);
     }
   });
+=======
+  //     chaptersSections.forEach(section => {
+  //         if(sectionsCompleted.includes(section)){
+  //             chaptersSectionsCompleted.push(section);
+  //         }
+  //     });
 
-  let points = sectionsCompleted.length;
+  //     if(chaptersSections.length == chaptersSectionsCompleted.length){
+  //         chaptersCompleted.push(chapter);
+  //     }
+  // });
 
+  let points = parseInt(State.rankings.find(user => user.userId == State.user.user_id).points);
+>>>>>>> Stashed changes
+
+  // chaptersCompleted.forEach(chapter => {
+  //     points += 5;
+  // });
+
+<<<<<<< Updated upstream
   chaptersCompleted.forEach(chapter => {
     points += chapter.spot;
   });
@@ -696,9 +741,13 @@ function calcRanking() {
     points += parseInt(highStreak);
   }
 
+=======
+  //console.log("after highstreak: " + points);
+  
+>>>>>>> Stashed changes
   SubPub.publish({
     event: "db::patch::points::request",
-    detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: points } }
+    detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: points} }
   })
 
 }
