@@ -330,15 +330,6 @@ export default {
           event: `db::patch::ranking::request`,
           detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: usersPoints } }
         });
-      }
-    },
-    {
-      events: ["db::patch::ranking::received"],
-      middleware: (response) => {
-
-        State.rankings = response.rankings;
-
-        State.user.rank = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].rank;
 
         let userBadges = state_io.state.user.badges;
         userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
@@ -367,6 +358,15 @@ export default {
           default:
             break
         }
+      }
+    },
+    {
+      events: ["db::patch::ranking::received"],
+      middleware: (response) => {
+
+        State.rankings = response.rankings;
+
+        State.user.rank = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].rank;
 
         SubPub.publish({
           event: "render_user_progress",
