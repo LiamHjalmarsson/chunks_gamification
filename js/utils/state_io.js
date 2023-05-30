@@ -324,7 +324,6 @@ export default {
       events: ["db::patch::points::received"],
       middleware: (response) => {
 
-<<<<<<< Updated upstream
         let usersPoints = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].points;
 
         SubPub.publish({
@@ -359,7 +358,6 @@ export default {
           default:
             break
         }
-=======
       State.rankings = response.rankings; 
 
       State.user.rank = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].rank;
@@ -372,7 +370,6 @@ export default {
       if(localStorage.getItem("progress") == "RANKINGS"){
         document.getElementById("progress_rankings_btn").click();
       }
->>>>>>> Stashed changes
       }
     },
     {
@@ -671,15 +668,6 @@ function calcRanking() {
   // let sectionsCompleted = [];
 
   //Loops to check sections completed
-<<<<<<< Updated upstream
-  allSections.forEach(section => {
-    let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
-    let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id && un.check_complete == true);
-
-    if (sectionsUnits.length == sectionsUnitsCompleted.length) {
-      sectionsCompleted.push(section);
-    }
-=======
   // allSections.forEach(section => {
   //     let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
   //     let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id);
@@ -688,28 +676,12 @@ function calcRanking() {
   //         sectionsCompleted.push(section);
   //     }
   // });
->>>>>>> Stashed changes
 
   // allChapters.forEach(chapter => {
 
   //     let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
   //     let chaptersSectionsCompleted = [];
 
-<<<<<<< Updated upstream
-    let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
-    let chaptersSectionsCompleted = [];
-
-    chaptersSections.forEach(section => {
-      if (sectionsCompleted.includes(section)) {
-        chaptersSectionsCompleted.push(section);
-      }
-    });
-
-    if (chaptersSections.length == chaptersSectionsCompleted.length) {
-      chaptersCompleted.push(chapter);
-    }
-  });
-=======
   //     chaptersSections.forEach(section => {
   //         if(sectionsCompleted.includes(section)){
   //             chaptersSectionsCompleted.push(section);
@@ -722,29 +694,13 @@ function calcRanking() {
   // });
 
   let points = parseInt(State.rankings.find(user => user.userId == State.user.user_id).points);
->>>>>>> Stashed changes
 
   // chaptersCompleted.forEach(chapter => {
   //     points += 5;
   // });
 
-<<<<<<< Updated upstream
-  chaptersCompleted.forEach(chapter => {
-    points += chapter.spot;
-  });
-
-  sectionsCompleted.forEach(sect => {
-    points++;
-  });
-
-  if (highStreak != null) {
-    points += parseInt(highStreak);
-  }
-
-=======
   //console.log("after highstreak: " + points);
   
->>>>>>> Stashed changes
   SubPub.publish({
     event: "db::patch::points::request",
     detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: points} }
