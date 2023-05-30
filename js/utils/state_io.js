@@ -1,5 +1,4 @@
 import { SubPub } from "./subpub.js";
-import { ranking } from "./component_ranking.js";
 
 
 let State = {};
@@ -64,7 +63,7 @@ export default {
       events: ["db::get::date_time::received"],
       middleware: () => { }
     },
-
+  
     // USERS
     {
       events: ["db::delete::user::received"],
@@ -322,59 +321,31 @@ export default {
     },
     {
       events: ["db::patch::points::received"],
-      middleware: (response) => {
+      middleware: (response) => { 
 
         let usersPoints = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].points;
-
+        
         SubPub.publish({
           event: `db::patch::ranking::request`,
-          detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: usersPoints } }
-        });
+          detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points:usersPoints} }
+      });
       }
     },
     {
       events: ["db::patch::ranking::received"],
-      middleware: (response) => {
+      middleware: (response) => { 
 
-        State.rankings = response.rankings;
+        State.rankings = response.rankings; 
 
         State.user.rank = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].rank;
 
-        let userBadges = state_io.state.user.badges;
-        userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
-
-        switch (State.user.rank) {
-          case ("Silver"):
-            if (!userBadges.includes(`${state_io.state.course.course_id}.2`)) {
-              ranking.patchBadges(`${state_io.state.course.course_id}.2`)
-            }
-            break;
-          case ("Gold"):
-            if (!userBadges.includes(`${state_io.state.course.course_id}.3`)) {
-              ranking.patchBadges(`${state_io.state.course.course_id}.3`)
-            }
-            break;
-          case ("Diamond"):
-            if (!userBadges.includes(`${state_io.state.course.course_id}.4`)) {
-              ranking.patchBadges(`${state_io.state.course.course_id}.4`)
-            }
-            break;
-          case ("Platinum"):
-            if (!userBadges.includes(`${state_io.state.course.course_id}.5`)) {
-              ranking.patchBadges(`${state_io.state.course.course_id}.5`)
-            }
-            break;
-          default:
-            break
-        }
-
         SubPub.publish({
           event: "render_user_progress",
-          detail: {}
+          detail:{}
 
         });
 
-        if (localStorage.getItem("progress") == "RANKINGS") {
+        if(localStorage.getItem("progress") == "RANKINGS"){
           document.getElementById("progress_rankings_btn").click();
         }
 
@@ -392,14 +363,14 @@ export default {
 
         SubPub.publish({
           event: "ranking_done",
-          detail: {}
+          detail:{}
         });
 
         console.log(localStorage.getItem("progressDiv"));
         console.log(localStorage.getItem("progress"));
 
-        if (localStorage.getItem("progressDiv") == "open" && localStorage.getItem("progress") == "PROGRESS") {
-          SubPub.publish({
+        if(localStorage.getItem("progressDiv") == "open" && localStorage.getItem("progress") == "PROGRESS"){
+            SubPub.publish({
             event: "render_user_progress"
           });
         }
@@ -657,42 +628,42 @@ function calcRanking() {
 
   //Loops to check sections completed
   allSections.forEach(section => {
-    let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
-    let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id && un.check_complete == true);
+      let sectionsUnits = allUnits.filter(unit => unit.section_id == section.section_id);
+      let sectionsUnitsCompleted = users_units.filter(un => un.section_id == section.section_id && un.check_complete == true);
 
-    if (sectionsUnits.length == sectionsUnitsCompleted.length) {
-      sectionsCompleted.push(section);
-    }
+      if(sectionsUnits.length == sectionsUnitsCompleted.length){
+          sectionsCompleted.push(section);
+      }
 
   });
 
   allChapters.forEach(chapter => {
 
-    let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
-    let chaptersSectionsCompleted = [];
+      let chaptersSections = allSections.filter(section => section.chapter_id == chapter.chapter_id);
+      let chaptersSectionsCompleted = [];
 
-    chaptersSections.forEach(section => {
-      if (sectionsCompleted.includes(section)) {
-        chaptersSectionsCompleted.push(section);
+      chaptersSections.forEach(section => {
+          if(sectionsCompleted.includes(section)){
+              chaptersSectionsCompleted.push(section);
+          }
+      });
+
+      if(chaptersSections.length == chaptersSectionsCompleted.length){
+          chaptersCompleted.push(chapter);
       }
-    });
-
-    if (chaptersSections.length == chaptersSectionsCompleted.length) {
-      chaptersCompleted.push(chapter);
-    }
   });
 
   let points = sectionsCompleted.length;
 
   chaptersCompleted.forEach(chapter => {
-    points += chapter.spot;
+      points += chapter.spot;
   });
 
   sectionsCompleted.forEach(sect => {
     points++;
   });
-
-  if (highStreak != null) {
+  
+  if(highStreak != null){
     points += parseInt(highStreak);
   }
 
