@@ -77,31 +77,75 @@ function setUserRank() {
 function calculateRank() {
     let rank;
     let badgenr;
-    let totalPoints = calculatePoints()
+    let totalPoints = calculatePoints();
+
+    let allunits = state_io.state.units;
+
+    let maxPoints = allunits.length * 3;
+
+console.log(maxPoints);
+  
+    // if($points < ($maxPoints * 0.25)){
+    //   $rank = "Bronze";
+    // }elseif ($points >= ($totalpoints * 0.25) && $points <= ($totalpoints * 0.5)) {
+    //   $rank = "Silver";
+    // }elseif ($points >= ($totalpoints * 0.5) && $points <= ($totalpoints * 0.75)) {
+    //   $rank = "Gold";
+    // }elseif ($points >= ($totalpoints * 0.75) && $points <= $totalpoints) {
+    //   $rank = "Diamond";
+    // }else {
+    //   $rank = "Platinum";
+    // }
+
     switch (true) {
-        case (totalPoints <= 9):
+        case (totalPoints < (maxPoints * 0.25)):
             rank = "Bronze";
             badgenr = 1;
             break;
-        case (totalPoints >= 10 && totalPoints <= 39):
+        case (totalPoints >= (maxPoints * 0.25) && totalPoints < (maxPoints * 0.5)):
             rank = "Silver";
             badgenr = 2;
             break;
-        case (totalPoints >= 40 && totalPoints <= 69):
+        case (totalPoints >= (maxPoints * 0.5) && totalPoints < (maxPoints * 0.75)):
             rank = "Gold";
             badgenr = 3;
             break;
-        case (totalPoints >= 70 && totalPoints <= 99):
+        case (totalPoints >= (maxPoints * 0.75) && totalPoints < maxPoints):
             rank = "Diamond";
             badgenr = 4;
             break;
-        case (totalPoints >= 100):
+        case (totalPoints >= maxPoints):
             rank = "Platinum";
             badgenr = 5;
             break;
         default:
             break;
     }
+
+    // switch (true) {
+    //     case (totalPoints <= 9):
+    //         rank = "Bronze";
+    //         badgenr = 1;
+    //         break;
+    //     case (totalPoints >= 10 && totalPoints <= 39):
+    //         rank = "Silver";
+    //         badgenr = 2;
+    //         break;
+    //     case (totalPoints >= 40 && totalPoints <= 69):
+    //         rank = "Gold";
+    //         badgenr = 3;
+    //         break;
+    //     case (totalPoints >= 70 && totalPoints <= 99):
+    //         rank = "Diamond";
+    //         badgenr = 4;
+    //         break;
+    //     case (totalPoints >= 100):
+    //         rank = "Platinum";
+    //         badgenr = 5;
+    //         break;
+    //     default:
+    //         break;
+    // }
     if (rank !== state_io.state.user.rank) {
         state_io.state.user.rank = rank;
         // // Patch rank in DB
@@ -124,24 +168,27 @@ function calculateNextRank() {
         totalPoints = 0;
     }
 
+    let allunits = state_io.state.units;
+    let maxPoints = allunits.length * 3;
+
     switch (true) {
-        case (totalPoints <= 9):
+        case (totalPoints < (maxPoints * 0.25)):
             nextRankTitle = "Silver";
-            percentageDone = (100 * getLastDigit(totalPoints)) / 10;
+            percentageDone = (100 * getLastDigit(totalPoints)) / ((maxPoints * 0.5)-(maxPoints * 0.25));
             break;
-        case (totalPoints >= 10 && totalPoints <= 39):
+        case (totalPoints >= (maxPoints * 0.25) && totalPoints < (maxPoints * 0.5)):
             nextRankTitle = "Gold";
-            percentageDone = (100 * getLastDigit(totalPoints)) / 40;
+            percentageDone = (100 * getLastDigit(totalPoints)) / ((maxPoints * 0.75)-(maxPoints * 0.5));
             break;
-        case (totalPoints >= 40 && totalPoints <= 69):
+        case (totalPoints >= (maxPoints * 0.5) && totalPoints < (maxPoints * 0.75)):
             nextRankTitle = "Diamond";
-            percentageDone = (100 * getLastDigit(totalPoints)) / 70;
+            percentageDone = (100 * getLastDigit(totalPoints)) / ((maxPoints)-(maxPoints * 0.75));
             break;
-        case (totalPoints >= 70 && totalPoints <= 99):
+        case (totalPoints >= (maxPoints * 0.75) && totalPoints < maxPoints):
             nextRankTitle = "Platinum";
-            percentageDone = (100 * getLastDigit(totalPoints)) / 100;
+            percentageDone = (100 * getLastDigit(totalPoints)) / maxPoints;
             break;
-        case (totalPoints >= 40):
+        case (totalPoints >= maxPoints):
             nextRankTitle = "You're at the highest rank!";
             percentageDone = 100;
             break;

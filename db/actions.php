@@ -313,7 +313,7 @@ function PATCH_points($params, $pdo){
   $pdo -> query("UPDATE rankings SET points = '$points' WHERE userId = '$user_id' AND course = '$course'");
 
   $allunits = _get_course_units($params["course"]["course_id"],$pdo);
-  $allchapters = _get_course_chapters($params["course"]["course_id"],$pdo);
+  //$allchapters = _get_course_chapters($params["course"]["course_id"],$pdo);
 
   //$totalpoints = (count($allunits) * 3) + (count($allchapters)*5);
   $totalpoints = count($allunits) * 3;

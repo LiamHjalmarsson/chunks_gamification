@@ -331,28 +331,28 @@ export default {
           detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: usersPoints } }
         });
 
-        let userBadges = state_io.state.user.badges;
+        let userBadges = State.user.badges;
         userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
 
         switch (State.user.rank) {
           case ("Silver"):
-            if (!userBadges.includes(`${state_io.state.course.course_id}.2`)) {
-              ranking.patchBadges(`${state_io.state.course.course_id}.2`)
+            if (!userBadges.includes(`${State.course.course_id}.2`)) {
+              ranking.patchBadges(`${State.course.course_id}.2`)
             }
             break;
           case ("Gold"):
-            if (!userBadges.includes(`${state_io.state.course.course_id}.3`)) {
-              ranking.patchBadges(`${state_io.state.course.course_id}.3`)
+            if (!userBadges.includes(`${State.course.course_id}.3`)) {
+              ranking.patchBadges(`${State.course.course_id}.3`)
             }
             break;
           case ("Diamond"):
-            if (!userBadges.includes(`${state_io.state.course.course_id}.4`)) {
-              ranking.patchBadges(`${state_io.state.course.course_id}.4`)
+            if (!userBadges.includes(`${State.course.course_id}.4`)) {
+              ranking.patchBadges(`${State.course.course_id}.4`)
             }
             break;
           case ("Platinum"):
-            if (!userBadges.includes(`${state_io.state.course.course_id}.5`)) {
-              ranking.patchBadges(`${state_io.state.course.course_id}.5`)
+            if (!userBadges.includes(`${State.course.course_id}.5`)) {
+              ranking.patchBadges(`${State.course.course_id}.5`)
             }
             break;
           default:
