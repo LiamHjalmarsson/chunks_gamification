@@ -326,10 +326,10 @@ export default {
 
         let usersPoints = response.rankings.filter(obj => obj.userId == State.user.user_id)[0].points;
 
-        SubPub.publish({
-          event: `db::patch::ranking::request`,
-          detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: usersPoints } }
-        });
+        // SubPub.publish({
+        //   event: `db::patch::ranking::request`,
+        //   detail: { params: { user_id: State.user.user_id, course: State.course.course_id, points: usersPoints } }
+        // });
 
         let userBadges = State.user.badges;
         userBadges = (userBadges.substring(1, userBadges.length - 1)).split(',');
