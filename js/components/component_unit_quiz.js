@@ -159,6 +159,8 @@ function renderOptions(options, optionsContainer, questionContainer, unitID) {
         if(option.correct){
           currentStreak++;
           updatedPoints++;
+        }else{
+          currentStreak = 0;
         }
 
         state_io.state.rankings.find(user => user.userId == state_io.state.user.user_id).points = updatedPoints;
